@@ -10,11 +10,148 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Здесь будет видимое содержимое страницы -->
-    <h1>Привет, мир!</h1>
-    <p>Это моя первая веб-страница.</p>
+    <!-- TOAST уведомления -->
+    <div id="toast" class="toast-message">Товар добавлен</div>
 
-    <!-- Подключение JS (обычно перед закрывающим body) -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="#">Главная</a>
+                <a href="#">Каталог</a>
+                <a href="#">О нас</a>
+                <a href="#">Доставка</a>
+                <a href="#">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="#" class="action-btn" id="compareBtn" title="Сравнить товары">
+                    ⚖️ Сравнить <span class="count" id="compareCount">0</span>
+                </a>
+                <a href="#" class="action-btn" id="favoriteBtn" title="Избранное">
+                    ❤️ Избранное <span class="count" id="favoriteCount">0</span>
+                </a>
+                <a href="#" class="action-btn" id="cartBtn" title="Корзина">
+                    🛒 Корзина <span class="count" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Левая часть: реклама / новости + товары -->
+        <section class="promo-news">
+            <h2>Акции и новости</h2>
+
+            <!-- КАРУСЕЛЬ (перелистывание) -->
+            <div class="carousel-container">
+                <div class="carousel-slides" id="carouselSlides">
+                    <div class="carousel-slide active">
+                        <div class="promo-banner" style="background: linear-gradient(145deg, #2c3e50, #1e2a2e);">
+                            СКИДКИ НА ОРУЖИЕ ДО 30%
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="promo-banner" style="background: linear-gradient(145deg, #3e5c4b, #1f3a2c);">
+                            РЫБОЛОВНЫЕ СНАСТИ -25%
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="promo-banner" style="background: linear-gradient(145deg, #5d4037, #3e2723);">
+                            ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%
+                        </div>
+                    </div>
+                </div>
+                <!-- Стрелки -->
+                <button class="carousel-arrow carousel-arrow-left" id="carouselPrev">❮</button>
+                <button class="carousel-arrow carousel-arrow-right" id="carouselNext">❯</button>
+                <!-- Точки-индикаторы -->
+                <div class="carousel-dots" id="carouselDots"></div>
+            </div>
+
+            <div class="news-list">
+                <article class="news-item">
+                    <h3>📢 Новые поступления патронов</h3>
+                    <p>Поступила партия патронов 12 калибра от ведущих производителей.</p>
+                    <small>2 часа назад</small>
+                </article>
+                <article class="news-item">
+                    <h3>🎣 Сезонная распродажа снастей</h3>
+                    <p>Удилища и катушки со скидкой до 25%.</p>
+                    <small>Вчера</small>
+                </article>
+                <article class="news-item">
+                    <h3>🛡️ Новые бронежилеты класса Бр5</h3>
+                    <p>Поступление сертифицированных бронежилетов.</p>
+                    <small>3 дня назад</small>
+                </article>
+            </div>
+
+            <!-- БЛОК ТОВАРОВ (динамический) -->
+            <div class="products-section">
+                <div class="products-header">
+                    <h2>🔥 Популярные товары</h2>
+                    <span style="font-size:14px; color:#666;" id="resultCount"></span>
+                </div>
+                <div id="productsContainer" class="product-grid">
+                    <!-- JS рендерит карточки -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Правая часть: бренды + управление -->
+        <aside class="brands-sidebar">
+            <h3>
+                Популярные бренды
+                <span style="font-size:13px; font-weight:normal; color:#c49a3f; cursor:pointer;" id="resetBrandFilter">✖ сброс</span>
+            </h3>
+            <div class="brand-list" id="brandListContainer">
+                <!-- динамически заполним -->
+            </div>
+            <button class="reset-filters-btn" id="showAllBtn">Показать все товары</button>
+            <button class="clear-counters-btn" id="clearCountersBtn">🧹 Сбросить все счетчики</button>
+            <p style="font-size:12px; color:#888; margin-top:12px;">⭐ Клик по бренду — фильтр</p>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="#">О компании</a></li>
+                    <li><a href="#">Новости</a></li>
+                    <li><a href="#">Вакансии</a></li>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="#">Как заказать</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Возврат</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <ul>
+                    <li>📞 8 (800) 123-45-67</li>
+                    <li>✉️ info@huntfish.ru</li>
+                    <li>📍 г. Москва, ул. Охотничья, 15</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 Охотничий и рыболовный магазин. Все права защищены.
+        </div>
+    </footer>
+
+    <!-- Подключение JS (перед закрывающим body) -->
     <script src="js/main.js"></script>
 </body>
 </html>
