@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог · Охота и Рыбалка</title>
+    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="toast" class="toast-message">Товар добавлен</div>
+
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html" class="active">Каталог</a>
+                <a href="#">О нас</a>
+                <a href="#">Доставка</a>
+                <a href="#">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="#" class="action-btn" id="compareBtn">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="#" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="#" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Сайдбар с фильтрами -->
+        <aside class="filters-sidebar">
+            <h3>Фильтры</h3>
+            <div class="filter-group">
+                <h4>Бренды <span class="filter-reset" id="resetBrands">сбросить</span></h4>
+                <div class="brand-list" id="brandFilters"></div>
+            </div>
+            <div class="filter-group">
+                <h4>Категории <span class="filter-reset" id="resetCategories">сбросить</span></h4>
+                <div class="category-list" id="categoryFilters"></div>
+            </div>
+            <div class="filter-group">
+                <h4>Цена, ₽</h4>
+                <div class="price-range">
+                    <input type="number" id="priceMin" placeholder="от" value="0">
+                    <span>—</span>
+                    <input type="number" id="priceMax" placeholder="до" value="50000">
+                </div>
+                <button class="apply-price" id="applyPrice">Применить</button>
+            </div>
+            <button class="reset-all-filters" id="resetAllFilters">Сбросить все фильтры</button>
+            <p style="font-size:12px; color:#888; margin-top:20px;">⭐ Выберите параметры</p>
+        </aside>
+
+        <!-- Каталог товаров -->
+        <section class="catalog-section">
+            <div class="catalog-header">
+                <h1>Каталог снаряжения</h1>
+                <div class="catalog-controls">
+                    <select class="sort-select" id="sortSelect">
+                        <option value="default">По умолчанию</option>
+                        <option value="priceAsc">Цена: по возрастанию</option>
+                        <option value="priceDesc">Цена: по убыванию</option>
+                        <option value="name">Название (А-Я)</option>
+                    </select>
+                    <div class="view-options">
+                        <button class="view-btn active" data-grid="4">▦▦</button>
+                        <button class="view-btn" data-grid="3">▦▦▦</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="productsContainer" class="product-grid"></div>
+
+            <!-- Пагинация -->
+            <div class="pagination" id="pagination"></div>
+            <div style="text-align:right; margin-top:10px; color:#666;" id="resultInfo"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="#">О компании</a></li>
+                    <li><a href="#">Новости</a></li>
+                    <li><a href="#">Вакансии</a></li>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="#">Как заказать</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Возврат</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <ul>
+                    <li>📞 8 (800) 123-45-67</li>
+                    <li>✉️ info@huntfish.ru</li>
+                    <li>📍 г. Москва, ул. Охотничья, 15</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
+    </footer>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>
