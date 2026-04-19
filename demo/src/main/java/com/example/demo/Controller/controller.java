@@ -19,6 +19,30 @@ public class controller {
     public String catalog() {
         return "catalog";
     }
+    @RequestMapping("/contacts")
+    public String contacts() {
+        return "contacts";
+    }
+    @RequestMapping("/favorites")
+    public String favorites() {
+        return "favorites";
+    }
+    @RequestMapping("/compare")
+    public String compare() {
+        return "compare";
+    }
+    @RequestMapping("/delivery")
+    public String delivery() {
+        return "delivery";
+    }
+    @RequestMapping("/about")
+    public String about() {
+        return "about";
+    }
+    @RequestMapping("/cart")
+    public String cart() {
+        return "cart";
+    }
     
     
     
