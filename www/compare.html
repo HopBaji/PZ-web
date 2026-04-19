@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сравнение товаров · Охота и Рыбалка</title>
+    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="toast" class="toast-message"></div>
+
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог</a>
+                <a href="about.html">О нас</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="#" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1400px; margin: 0 auto; width: 100%;">
+        <section class="compare-hero">
+            <h1>Сравнение товаров</h1>
+            <p>Выберите до 4 товаров, чтобы сравнить их характеристики</p>
+        </section>
+
+        <div id="compareContent" class="compare-container">
+    <!-- JS заполнит это -->
+</div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="about.html">О компании</a></li>
+                    <li><a href="#">Новости</a></li>
+                    <li><a href="#">Вакансии</a></li>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="#">Как заказать</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="delivery.html">Доставка</a></li>
+                    <li><a href="#">Возврат</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <ul>
+                    <li>📞 8 (800) 123-45-67</li>
+                    <li>✉️ info@huntfish.ru</li>
+                    <li>📍 г. Москва, ул. Охотничья, 15</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

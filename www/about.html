@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас · Охота и Рыбалка</title>
+    <link rel="icon" type="image/png" href="imges/title.png">
+    <!-- Общий CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="toast" class="toast-message"></div>
+
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог</a>
+                <a href="about.html" class="active">О нас</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="#" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1200px; margin: 0 auto; width: 100%;">
+        <!-- Hero-секция -->
+        <section class="about-hero">
+            <h1>ОХОТАРЫБАЛКА — ваш надёжный партнёр</h1>
+            <p>Более 10 лет мы снаряжаем охотников и рыболовов лучшим оборудованием. Качество, проверенное опытом.</p>
+        </section>
+
+        <!-- Миссия и ценности -->
+        <section class="about-section">
+            <h2>Наша миссия</h2>
+            <p style="font-size: 18px; line-height: 1.6; margin-bottom: 30px;">Мы объединяем традиции и инновации, чтобы каждый выход на природу приносил радость и успех. Честные цены, экспертные консультации и только проверенные бренды.</p>
+            
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <h3>🎯 Охотникам</h3>
+                    <p>Широкий выбор гладкоствольного и нарезного оружия, оптики, патронов, одежды и аксессуаров. Работаем с лицензиями, помогаем с документами.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>🎣 Рыболовам</h3>
+                    <p>Удилища, катушки, приманки, эхолоты и лодки от мировых производителей. Регулярные поставки новинок и сезонные скидки.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Преимущества -->
+        <section class="about-section">
+            <h2>Почему выбирают нас</h2>
+            <div class="advantages-list">
+                <div class="advantage-item">
+                    <div class="advantage-icon">✅</div>
+                    <h4>Гарантия качества</h4>
+                    <p>Только оригинальная продукция с официальной гарантией.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🚚</div>
+                    <h4>Быстрая доставка</h4>
+                    <p>Отправка по всей России. Курьером или в пункты выдачи.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">💬</div>
+                    <h4>Экспертная поддержка</h4>
+                    <p>Опытные консультанты помогут с выбором снаряжения.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🔄</div>
+                    <h4>Обмен и возврат</h4>
+                    <p>Без проблем в течение 14 дней.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Команда (условная) -->
+        <section class="about-section">
+            <h2>Наша команда</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('imges/team1.jpg'); background-color: #a7b09e;"></div>
+                    <h4>Алексей Смирнов</h4>
+                    <p>Руководитель, охотник с 20-летним стажем</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('imges/team2.jpg'); background-color: #b0aa93;"></div>
+                    <h4>Ирина Котова</h4>
+                    <p>Специалист по рыболовным снастям</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('imges/team3.jpg'); background-color: #8f9e8a;"></div>
+                    <h4>Дмитрий Волков</h4>
+                    <p>Менеджер по работе с клиентами</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('imges/team4.jpg'); background-color: #bcb09b;"></div>
+                    <h4>Ольга Нечаева</h4>
+                    <p>Логистика и доставка</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контакты кратко -->
+        <section class="about-section">
+            <h2>Контакты</h2>
+            <div class="contacts-block">
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <div><strong>Телефон:</strong><br>8 (800) 123-45-67</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✉️</span>
+                    <div><strong>Email:</strong><br>info@huntfish.ru</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <div><strong>Адрес:</strong><br>г. Москва, ул. Охотничья, 15</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🕒</span>
+                    <div><strong>Режим работы:</strong><br>Пн–Вс: 10:00 – 20:00</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="about.html">О компании</a></li>
+                    <li><a href="#">Новости</a></li>
+                    <li><a href="#">Вакансии</a></li>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="#">Как заказать</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Возврат</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <ul>
+                    <li>📞 8 (800) 123-45-67</li>
+                    <li>✉️ info@huntfish.ru</li>
+                    <li>📍 г. Москва, ул. Охотничья, 15</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 Охотничий и рыболовный магазин. Все права защищены.
+        </div>
+    </footer>
+
+    <!-- Общий JS (содержит инициализацию счётчиков, toasts и т.д.) -->
+    <script src="js/main.js"></script>
+    <script>
+        // Дополнительный код для страницы "О нас" (минимальный)
+        (function() {
+            // Поиск со страницы "О нас" может перенаправлять в каталог с запросом
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `catalog.html?search=${encodeURIComponent(query)}`;
+                } else {
+                    window.location.href = 'catalog.html';
+                }
+            }
+            
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performSearch);
+            }
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performSearch();
+                });
+            }
+
+            // Блокируем action-кнопки (уже в main.js, но на всякий случай)
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => e.preventDefault());
+            });
+            
+            // Логотип ведёт на главную (уже в main.js, но продублируем)
+            const logo = document.getElementById('logoBtn');
+            if (logo) {
+                logo.addEventListener('click', () => window.location.href = 'index.html');
+            }
+        })();
+    </script>
+</body>
+</html>
