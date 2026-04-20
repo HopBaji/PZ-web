@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="imges/title.png">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="page-catalog">
     <div id="toast" class="toast-message">Товар добавлен</div>
 
     <header class="header">
@@ -27,7 +27,7 @@
             <div class="user-actions">
                 <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
                 <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
-                <a href="#" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+                <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
             </div>
         </div>
     </header>
@@ -86,23 +86,23 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>О магазине</h4>
-                <ul>
-                    <li><a href="#">О компании</a></li>
-                    <li><a href="#">Новости</a></li>
-                    <li><a href="#">Вакансии</a></li>
-                    <li><a href="#">Политика конфиденциальности</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Покупателям</h4>
-                <ul>
-                    <li><a href="#">Как заказать</a></li>
-                    <li><a href="#">Оплата</a></li>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Возврат</a></li>
-                </ul>
-            </div>
+    <h4>О магазине</h4>
+    <ul>
+        <li><a href="about.html">О компании</a></li>
+        <li><a href="news.html">Новости</a></li>
+        <li><a href="vacancies.html">Вакансии</a></li>
+        <li><a href="privacy.html">Политика конфиденциальности</a></li>
+    </ul>
+</div>
+<div class="footer-section">
+    <h4>Покупателям</h4>
+    <ul>
+        <li><a href="howtoorder.html">Как заказать</a></li>
+        <li><a href="payment.html">Оплата</a></li>
+        <li><a href="delivery.html">Доставка</a></li>
+        <li><a href="returns.html">Возврат</a></li>
+    </ul>
+</div>
             <div class="footer-section">
                 <h4>Контакты</h4>
                 <ul>
@@ -115,6 +115,7 @@
         <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
     
+    <script src="js/content.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Админ‑панель | Управление контентом</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            padding: 24px 20px;
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #2d3a4e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            background: none;
+            color: #5b6e8c;
+            background-clip: unset;
+            -webkit-background-clip: unset;
+        }
+
+        .badge-count {
+            background: #e2e8f0;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        /* Табы */
+        .tabs-nav {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-btn:hover {
+            color: #0f172a;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .tab-btn.active {
+            color: #0f172a;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-bottom-color: white;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* панель формы */
+        .panel {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            border: 1px solid #e9eef3;
+            transition: all 0.2s;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #4a5a72;
+        }
+
+        .form-group label .required-star {
+            color: #ef4444;
+            margin-left: 3px;
+        }
+
+        .optional-badge {
+            font-size: 10px;
+            font-weight: normal;
+            background: #eef2ff;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 8px;
+            color: #2563eb;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 11px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 14px;
+            transition: 0.2s;
+            background: #fefefe;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #3b82f6;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            padding: 10px 24px;
+            border-radius: 44px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            color: #1e293b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #0f172a;
+            border-color: #0f172a;
+            color: white;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #2d3a5e;
+            border-color: #2d3a5e;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: #cbd5e1;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-success {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            gap: 6px;
+        }
+
+        /* таблица */
+        .table-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            gap: 12px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 24px;
+            background: white;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            text-align: left;
+            padding: 18px 16px;
+            background: #fafcff;
+            font-weight: 700;
+            font-size: 13px;
+            color: #334155;
+            border-bottom: 1px solid #e4e9f0;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f2f7;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #fafdff;
+        }
+
+        .weapon-img-preview {
+            width: 52px;
+            height: 52px;
+            background: #f1f5f9;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 500;
+            color: #2c3e66;
+            border: 1px solid #e2edf7;
+        }
+
+        .price-tag {
+            font-weight: 700;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 56px 20px;
+            color: #6c7a91;
+            font-style: italic;
+            font-size: 15px;
+        }
+
+        .stat-number {
+            font-weight: 700;
+            background: #e6edf6;
+            border-radius: 24px;
+            padding: 2px 10px;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .toast-message {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1f2a3e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 60px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 16px; }
+            .panel { padding: 20px; }
+            .btn { padding: 8px 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-bar">
+        <h1>Управление контентом <small>администратор</small></h1>
+        <div class="badge-count">📊 панель v2.0</div>
+    </div>
+
+    <!-- Табы -->
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="catalog">📦 Каталог оружия</button>
+        <button class="tab-btn" data-tab="promo">🎁 Акции</button>
+        <button class="tab-btn" data-tab="news">📰 Новости</button>
+        <button class="tab-btn" data-tab="carousel">🎠 Карусель</button>
+        <button class="tab-btn" data-tab="popular">⭐ Популярные товары</button>
+    </div>
+
+    <!-- ========== ВКЛАДКА КАТАЛОГ ========= -->
+    <div class="tab-pane active" id="pane-catalog">
+        <div class="panel">
+            <h2 style="margin-bottom: 20px; font-weight: 600; font-size: 20px;" id="catalog-form-title">➕ Добавить новое оружие</h2>
+            <form id="weapon-form" autocomplete="off">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID <span class="required-star">*</span></label><input type="number" id="weapon-id" placeholder="Уникальный номер" required></div>
+                    <div class="form-group"><label>Название <span class="required-star">*</span></label><input type="text" id="weapon-name" placeholder="Benelli M4" required></div>
+                    <div class="form-group"><label>Бренд</label><input type="text" id="weapon-brand" placeholder="Benelli"></div>
+                    <div class="form-group"><label>Категория</label><input type="text" id="weapon-category" placeholder="Оружие"></div>
+                    <div class="form-group"><label>Цена (₽)</label><input type="number" id="weapon-price" placeholder="27500"></div>
+                    <div class="form-group"><label>Цена строкой</label><input type="text" id="weapon-priceStr" placeholder="27 500 ₽"></div>
+                    <div class="form-group"><label>Метка для иконки</label><input type="text" id="weapon-imgLabel" placeholder="M4"></div>
+                    <div class="form-group"><label>Имя файла</label><input type="text" id="weapon-imgFile" placeholder="Benelli_M4.webp"></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Описание</label><textarea id="weapon-desc" placeholder="Характеристики..."></textarea></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="catalog-submit-btn">➕ Добавить</button>
+                    <button type="button" class="btn btn-outline" id="catalog-clear-form">🧹 Очистить</button>
+                    <button type="button" class="btn btn-outline" id="catalog-cancel-edit" style="display:none;">✖ Отменить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions">
+            <h2>📋 Каталог <span class="stat-number" id="catalog-count">0</span></h2>
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-success btn-sm" id="export-mainjs">📎 Экспорт только каталога</button>
+                <button class="btn btn-primary btn-sm" id="export-all-content">📦 Экспорт всего контента</button>
+                <button class="btn btn-outline btn-sm" id="catalog-reset-default">⟳ Сброс до заводского</button>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table id="catalog-table">
+                <thead><tr><th>ID</th><th>Иконка</th><th>Название</th><th>Бренд</th><th>Цена</th><th>Описание</th><th>Действия</th></tr></thead>
+                <tbody id="catalog-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА АКЦИИ ========= -->
+    <div class="tab-pane" id="pane-promo">
+        <div class="panel">
+            <h2 style="margin-bottom:20px;">🎁 Управление акциями</h2>
+            <form id="promo-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID акции</label><input type="text" id="promo-id" placeholder="promo1" required></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="promo-title" placeholder="Скидка 30%"></div>
+                    <div class="form-group"><label>Описание</label><textarea id="promo-desc" placeholder="Условия..."></textarea></div>
+                    <div class="form-group"><label>Цвет фона</label><input type="color" id="promo-bg" value="#c49a3f"></div>
+                    <div class="form-group"><label>Текст кнопки</label><input type="text" id="promo-btn-text" value="Подробнее"></div>
+                    <div class="form-group"><label>Ссылка</label><input type="text" id="promo-link" value="#"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">➕ Добавить акцию</button>
+                    <button type="button" class="btn btn-outline" id="promo-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>📢 Список акций</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead>
+                <tbody id="promo-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА НОВОСТИ ========= -->
+    <div class="tab-pane" id="pane-news">
+        <div class="panel">
+            <h2>📰 Новости</h2>
+            <form id="news-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID</label><input type="text" id="news-id" placeholder="news1" required></div>
+                    <div class="form-group"><label>Дата</label><input type="date" id="news-date"></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="news-title"></div>
+                    <div class="form-group" style="grid-column:span 2;"><label>Текст</label><textarea id="news-text"></textarea></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">➕ Добавить новость</button>
+                    <button type="button" class="btn btn-outline" id="news-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>📋 Лента новостей</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Дата</th><th>Заголовок</th><th>Текст</th><th>Действия</th></tr></thead>
+                <tbody id="news-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА КАРУСЕЛЬ ========= -->
+    <div class="tab-pane" id="pane-carousel">
+        <div class="panel">
+            <h2>🎠 Слайды карусели</h2>
+            <form id="carousel-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID слайда</label><input type="text" id="slide-id" placeholder="slide1" required></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="slide-title" value="Новое поступление"></div>
+                    <div class="form-group"><label>Подзаголовок</label><input type="text" id="slide-subtitle"></div>
+                    <div class="form-group"><label>Цвет фона</label><input type="color" id="slide-bg" value="#1e2a2e"></div>
+                    <div class="form-group"><label>Текст кнопки</label><input type="text" id="slide-btn-text" value="Смотреть"></div>
+                    <div class="form-group"><label>Ссылка</label><input type="text" id="slide-link" value="catalog.html"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">➕ Добавить слайд</button>
+                    <button type="button" class="btn btn-outline" id="carousel-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>🎞️ Слайды</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead>
+                <tbody id="carousel-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА ПОПУЛЯРНЫЕ ТОВАРЫ ========= -->
+    <div class="tab-pane" id="pane-popular">
+        <div class="panel">
+            <h2>⭐ Популярные товары (ID)</h2>
+            <form id="popular-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID товара</label><input type="number" id="popular-product-id" placeholder="1" required></div>
+                    <div class="form-group"><label>Приоритет</label><input type="number" id="popular-priority" value="1"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">➕ Добавить в популярное</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>🔥 Список популярных</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID товара</th><th>Название</th><th>Приоритет</th><th>Действия</th></tr></thead>
+                <tbody id="popular-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        "use strict";
+
+        // ---------- БАЗОВЫЙ НАБОР ОРУЖИЯ ----------
+        const DEFAULT_WEAPONS = [
+            { id: 1, name: "Benelli M3 Super 90", brand: "Benelli", category: "Оружие", price: 27500, priceStr: "27 500 ₽", imgLabel: "Benelli M3", imgFile: "Benelli_M3_View.webp", desc: "Полуавтоматическое/помповое ружьё 12x70" },
+            { id: 2, name: "Mossberg 590A1", brand: "Mossberg", category: "Оружие", price: 18400, priceStr: "18 400 ₽", imgLabel: "M590A1", imgFile: "M590A1_View.webp", desc: "Помповое ружьё 12x70" },
+            { id: 3, name: "Remington Model 870", brand: "Remington", category: "Оружие", price: 16300, priceStr: "16 300 ₽", imgLabel: "M870", imgFile: "M870_View.webp", desc: "Помповое ружьё 12x70" },
+            { id: 4, name: "Винтовка Мосина обр. 1891 г. (Пехотная)", brand: "Ижмаш", category: "Оружие", price: 25300, priceStr: "25 300 ₽", imgLabel: "Мосин", imgFile: "Mosin_Infantry_View.webp", desc: "Магазинная винтовка 7.62x54R" },
+            { id: 5, name: "MP-18", brand: "Ижмех", category: "Оружие", price: 12700, priceStr: "12 700 ₽", imgLabel: "МР-18", imgFile: "MP-18_View.webp", desc: "Однозарядное ружьё 7.62x54R" },
+            { id: 6, name: "MP-43-1C", brand: "Ижмех", category: "Оружие", price: 9400, priceStr: "9 400 ₽", imgLabel: "МР-43-1С", imgFile: "MP-43-1C_View.webp", desc: "Двуствольное ружьё 12x70" },
+            { id: 7, name: "MP-153", brand: "Ижмех", category: "Оружие", price: 21200, priceStr: "21 200 ₽", imgLabel: "МР-153", imgFile: "Mp153_View.webp", desc: "Полуавтоматическое ружьё 12x70" },
+            { id: 8, name: "MP-155", brand: "Ижмех", category: "Оружие", price: 25800, priceStr: "25 800 ₽", imgLabel: "МР-155", imgFile: "Mp155_View.webp", desc: "Полуавтоматическое ружьё 12x70 (улучшенное)" },
+            { id: 9, name: "MP-133", brand: "Ижмех", category: "Оружие", price: 15800, priceStr: "15 800 ₽", imgLabel: "МР-133", imgFile: "Mp133_View.webp", desc: "Помповое ружьё 12x70" },
+            { id: 10, name: "МЦ-255-12", brand: "ЦКИБ СОО", category: "Оружие", price: 29700, priceStr: "29 700 ₽", imgLabel: "МЦ-255", imgFile: "MTs-255-12_View.webp", desc: "Револьверное ружьё 12x70" },
+            { id: 11, name: "ОП-СКС", brand: "Молот", category: "Оружие", price: 20400, priceStr: "20 400 ₽", imgLabel: "ОП-СКС", imgFile: "OP-SKS_View.webp", desc: "Самозарядный карабин 7.62x39" },
+            { id: 12, name: "Сайга-12К исп.10", brand: "Концерн Калашников", category: "Оружие", price: 28200, priceStr: "28 200 ₽", imgLabel: "Сайга-12К", imgFile: "Saiga12k_View.webp", desc: "Полуавтоматический карабин 12x70" },
+            { id: 13, name: "Вепрь-Хантер (ВПО-101)", brand: "Молот", category: "Оружие", price: 34600, priceStr: "34 600 ₽", imgLabel: "Вепрь-Хантер", imgFile: "VeprHunter_View.webp", desc: "Самозарядный карабин 7.62x51" },
+            { id: 14, name: "ВПО-209", brand: "Молот", category: "Оружие", price: 22300, priceStr: "22 300 ₽", imgLabel: "ВПО-209", imgFile: "Vpo209_View.webp", desc: "Самозарядный карабин .366 ТКМ" },
+            { id: 15, name: "Винтовка Молот ВПО-215 'Горностай'", brand: "Молот", category: "Оружие", price: 18500, priceStr: "18 500 ₽", imgLabel: "ВПО-215", imgFile: "VPO-215_View.webp", desc: "Болтовой карабин .366 ТКМ" }
+        ];
+
+        // ----- Глобальные хранилища -----
+        let weapons = [];
+        let promos = [];
+        let news = [];
+        let slides = [];
+        let popular = [];
+
+        // ----- Ключи localStorage -----
+        const KEYS = {
+            weapons: 'weapons_catalog',
+            promos: 'admin_promos',
+            news: 'admin_news',
+            slides: 'admin_carousel',
+            popular: 'admin_popular'
+        };
+
+        // ----- Утилиты -----
+        function showToast(msg, duration=2200) {
+            let toast = document.querySelector('.toast-message');
+            if(toast) toast.remove();
+            const div = document.createElement('div');
+            div.className = 'toast-message';
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, duration);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+        }
+
+        // Загрузка всех данных
+        function loadAllData() {
+            weapons = JSON.parse(localStorage.getItem(KEYS.weapons)) || [...DEFAULT_WEAPONS];
+            promos = JSON.parse(localStorage.getItem(KEYS.promos)) || [];
+            news = JSON.parse(localStorage.getItem(KEYS.news)) || [];
+            slides = JSON.parse(localStorage.getItem(KEYS.slides)) || [];
+            popular = JSON.parse(localStorage.getItem(KEYS.popular)) || [];
+        }
+
+        function saveWeapons() { localStorage.setItem(KEYS.weapons, JSON.stringify(weapons)); }
+        function savePromos() { localStorage.setItem(KEYS.promos, JSON.stringify(promos)); }
+        function saveNews() { localStorage.setItem(KEYS.news, JSON.stringify(news)); }
+        function saveSlides() { localStorage.setItem(KEYS.slides, JSON.stringify(slides)); }
+        function savePopular() { localStorage.setItem(KEYS.popular, JSON.stringify(popular)); }
+
+        // ----- Рендеры таблиц -----
+        function renderCatalog() {
+            const tbody = document.getElementById('catalog-tbody');
+            const countSpan = document.getElementById('catalog-count');
+            if (!weapons.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-message">Каталог пуст</td></tr>`;
+                countSpan.textContent = '0';
+                return;
+            }
+            let html = '';
+            weapons.forEach(w => {
+                const symbol = w.imgLabel ? w.imgLabel.slice(0,2).toUpperCase() : '🔫';
+                html += `<tr>
+                    <td>${w.id}</td>
+                    <td><div class="weapon-img-preview">${escapeHtml(symbol)}</div></td>
+                    <td><strong>${escapeHtml(w.name)}</strong></td>
+                    <td>${escapeHtml(w.brand||'—')}</td>
+                    <td>${escapeHtml(w.priceStr||w.price)}</td>
+                    <td>${escapeHtml(w.desc?.substring(0,60))}</td>
+                    <td><div class="row-actions">
+                        <button class="btn btn-outline btn-sm edit-catalog" data-id="${w.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-catalog" data-id="${w.id}">🗑️</button>
+                    </div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            countSpan.textContent = weapons.length;
+        }
+
+        function renderPromos() {
+            const tbody = document.getElementById('promo-tbody');
+            if (!promos.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет акций</td></tr>`; return; }
+            let html = '';
+            promos.forEach(p => {
+                html += `<tr>
+                    <td>${escapeHtml(p.id)}</td>
+                    <td>${escapeHtml(p.title)}</td>
+                    <td><div style="width:30px;height:30px;background:${p.bg};border-radius:8px;"></div></td>
+                    <td>${escapeHtml(p.btnText)}</td>
+                    <td><div class="row-actions">
+                        <button class="btn btn-outline btn-sm edit-promo" data-id="${p.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-promo" data-id="${p.id}">🗑️</button>
+                    </div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderNews() {
+            const tbody = document.getElementById('news-tbody');
+            if (!news.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет новостей</td></tr>`; return; }
+            let html = '';
+            news.forEach(n => {
+                html += `<tr>
+                    <td>${escapeHtml(n.id)}</td>
+                    <td>${escapeHtml(n.date)}</td>
+                    <td>${escapeHtml(n.title)}</td>
+                    <td>${escapeHtml(n.text?.substring(0,40))}</td>
+                    <td><div class="row-actions">
+                        <button class="btn btn-outline btn-sm edit-news" data-id="${n.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-news" data-id="${n.id}">🗑️</button>
+                    </div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderCarousel() {
+            const tbody = document.getElementById('carousel-tbody');
+            if (!slides.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет слайдов</td></tr>`; return; }
+            let html = '';
+            slides.forEach(s => {
+                html += `<tr>
+                    <td>${escapeHtml(s.id)}</td>
+                    <td>${escapeHtml(s.title)}</td>
+                    <td><div style="width:30px;height:30px;background:${s.bg};border-radius:8px;"></div></td>
+                    <td>${escapeHtml(s.btnText)}</td>
+                    <td><div class="row-actions">
+                        <button class="btn btn-outline btn-sm edit-slide" data-id="${s.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-slide" data-id="${s.id}">🗑️</button>
+                    </div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderPopular() {
+            const tbody = document.getElementById('popular-tbody');
+            if (!popular.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-message">Нет популярных</td></tr>`; return; }
+            let html = '';
+            popular.sort((a,b) => (a.priority||0) - (b.priority||0));
+            popular.forEach(item => {
+                const prod = weapons.find(w => w.id === item.productId);
+                const name = prod ? prod.name : `Товар ${item.productId}`;
+                html += `<tr>
+                    <td>${item.productId}</td>
+                    <td>${escapeHtml(name)}</td>
+                    <td>${item.priority||1}</td>
+                    <td><button class="btn btn-danger btn-sm delete-popular" data-id="${item.productId}">Удалить</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ----- Инициализация табов -----
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.tab-pane');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panes.forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`pane-${target}`).classList.add('active');
+                });
+            });
+        }
+
+        // ----- Обработчики для КАТАЛОГА -----
+        let editingWeaponId = null;
+        const catalogForm = document.getElementById('weapon-form');
+        const idInput = document.getElementById('weapon-id');
+        const nameInput = document.getElementById('weapon-name');
+        const brandInput = document.getElementById('weapon-brand');
+        const categoryInput = document.getElementById('weapon-category');
+        const priceInput = document.getElementById('weapon-price');
+        const priceStrInput = document.getElementById('weapon-priceStr');
+        const imgLabelInput = document.getElementById('weapon-imgLabel');
+        const imgFileInput = document.getElementById('weapon-imgFile');
+        const descInput = document.getElementById('weapon-desc');
+        const submitBtn = document.getElementById('catalog-submit-btn');
+        const cancelBtn = document.getElementById('catalog-cancel-edit');
+        const clearBtn = document.getElementById('catalog-clear-form');
+
+        function resetCatalogForm() {
+            idInput.value = ''; nameInput.value = ''; brandInput.value = ''; categoryInput.value = '';
+            priceInput.value = ''; priceStrInput.value = ''; imgLabelInput.value = ''; imgFileInput.value = ''; descInput.value = '';
+            editingWeaponId = null; idInput.readOnly = false;
+            submitBtn.textContent = '➕ Добавить'; cancelBtn.style.display = 'none';
+        }
+
+        function editWeapon(id) {
+            const w = weapons.find(w => w.id === id);
+            if(!w) return;
+            idInput.value = w.id; nameInput.value = w.name; brandInput.value = w.brand||''; categoryInput.value = w.category||'';
+            priceInput.value = w.price||''; priceStrInput.value = w.priceStr||''; imgLabelInput.value = w.imgLabel||'';
+            imgFileInput.value = w.imgFile||''; descInput.value = w.desc||'';
+            editingWeaponId = id; idInput.readOnly = true;
+            submitBtn.textContent = '💾 Сохранить'; cancelBtn.style.display = 'inline-flex';
+        }
+
+        catalogForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const id = Number(idInput.value);
+            if (!id || !nameInput.value.trim()) return alert('ID и Название обязательны');
+            const newWeapon = {
+                id, name: nameInput.value.trim(), brand: brandInput.value.trim(), category: categoryInput.value.trim(),
+                price: Number(priceInput.value)||0, priceStr: priceStrInput.value.trim(),
+                imgLabel: imgLabelInput.value.trim(), imgFile: imgFileInput.value.trim(), desc: descInput.value.trim()
+            };
+            if (editingWeaponId) {
+                const idx = weapons.findIndex(w => w.id === editingWeaponId);
+                if(idx !== -1) weapons[idx] = newWeapon;
+            } else {
+                if (weapons.some(w => w.id === id)) return alert('ID уже существует');
+                weapons.push(newWeapon);
+            }
+            weapons.sort((a,b)=>a.id-b.id);
+            saveWeapons(); renderCatalog(); resetCatalogForm(); showToast('Сохранено');
+        });
+
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('edit-catalog')) editWeapon(Number(e.target.dataset.id));
+            if (e.target.classList.contains('delete-catalog')) {
+                const id = Number(e.target.dataset.id);
+                if (confirm('Удалить?')) { weapons = weapons.filter(w => w.id !== id); saveWeapons(); renderCatalog(); }
+            }
+        });
+
+        clearBtn.addEventListener('click', resetCatalogForm);
+        cancelBtn.addEventListener('click', resetCatalogForm);
+        document.getElementById('catalog-reset-default').addEventListener('click', () => {
+            if(confirm('Сбросить каталог до заводского?')) { weapons = [...DEFAULT_WEAPONS]; saveWeapons(); renderCatalog(); }
+        });
+
+        // Экспорт только каталога (старый функционал)
+        document.getElementById('export-mainjs').addEventListener('click', () => {
+            const content = `export const weaponsCatalog = ${JSON.stringify(weapons, null, 2)};`;
+            const blob = new Blob([content], {type: 'application/javascript'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'main.js'; a.click();
+            showToast('Каталог экспортирован в main.js');
+        });
+
+        // ========== ЭКСПОРТ ВСЕГО КОНТЕНТА ==========
+        document.getElementById('export-all-content').addEventListener('click', () => {
+            const allData = { weapons, promos, news, slides, popular };
+            const fileContent = `// Экспортированный контент магазина
+// Сгенерировано: ${new Date().toLocaleString('ru-RU')}
+
+export const weaponsCatalog = ${JSON.stringify(weapons, null, 2)};
+
+export const promosData = ${JSON.stringify(promos, null, 2)};
+
+export const newsData = ${JSON.stringify(news, null, 2)};
+
+export const carouselSlides = ${JSON.stringify(slides, null, 2)};
+
+export const popularProducts = ${JSON.stringify(popular, null, 2)};
+
+// Для использования через глобальный объект window
+if (typeof window !== 'undefined') {
+    window.shopContent = {
+        weaponsCatalog,
+        promosData,
+        newsData,
+        carouselSlides,
+        popularProducts
+    };
+}
+`;
+            const blob = new Blob([fileContent], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'content.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('📦 Весь контент экспортирован в content.js', 3000);
+        });
+
+        // ----- Обработчики для АКЦИЙ -----
+        const promoForm = document.getElementById('promo-form');
+        promoForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('promo-id').value.trim();
+            if (!id) return alert('Введите ID');
+            const promo = {
+                id, title: document.getElementById('promo-title').value,
+                desc: document.getElementById('promo-desc').value,
+                bg: document.getElementById('promo-bg').value,
+                btnText: document.getElementById('promo-btn-text').value,
+                link: document.getElementById('promo-link').value
+            };
+            const idx = promos.findIndex(p => p.id === id);
+            if (idx >= 0) promos[idx] = promo; else promos.push(promo);
+            savePromos(); renderPromos(); promoForm.reset(); showToast('Акция сохранена');
+        });
+        document.getElementById('promo-clear').addEventListener('click', () => promoForm.reset());
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-promo')) {
+                const id = e.target.dataset.id;
+                promos = promos.filter(p => p.id !== id); savePromos(); renderPromos();
+            }
+        });
+
+        // ----- НОВОСТИ -----
+        const newsForm = document.getElementById('news-form');
+        newsForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('news-id').value.trim();
+            if (!id) return alert('Введите ID');
+            const item = {
+                id, date: document.getElementById('news-date').value,
+                title: document.getElementById('news-title').value,
+                text: document.getElementById('news-text').value
+            };
+            const idx = news.findIndex(n => n.id === id);
+            if (idx >= 0) news[idx] = item; else news.push(item);
+            saveNews(); renderNews(); newsForm.reset(); showToast('Новость сохранена');
+        });
+        document.getElementById('news-clear').addEventListener('click', () => newsForm.reset());
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-news')) {
+                const id = e.target.dataset.id;
+                news = news.filter(n => n.id !== id); saveNews(); renderNews();
+            }
+        });
+
+        // ----- КАРУСЕЛЬ -----
+        const carouselForm = document.getElementById('carousel-form');
+        carouselForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('slide-id').value.trim();
+            if (!id) return alert('Введите ID');
+            const slide = {
+                id, title: document.getElementById('slide-title').value,
+                subtitle: document.getElementById('slide-subtitle').value,
+                bg: document.getElementById('slide-bg').value,
+                btnText: document.getElementById('slide-btn-text').value,
+                link: document.getElementById('slide-link').value
+            };
+            const idx = slides.findIndex(s => s.id === id);
+            if (idx >= 0) slides[idx] = slide; else slides.push(slide);
+            saveSlides(); renderCarousel(); carouselForm.reset(); showToast('Слайд сохранён');
+        });
+        document.getElementById('carousel-clear').addEventListener('click', () => carouselForm.reset());
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-slide')) {
+                const id = e.target.dataset.id;
+                slides = slides.filter(s => s.id !== id); saveSlides(); renderCarousel();
+            }
+        });
+
+        // ----- ПОПУЛЯРНЫЕ -----
+        const popularForm = document.getElementById('popular-form');
+        popularForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const productId = Number(document.getElementById('popular-product-id').value);
+            const priority = Number(document.getElementById('popular-priority').value) || 1;
+            if (!productId) return alert('Введите ID товара');
+            if (!weapons.some(w => w.id === productId)) return alert('Товар не найден в каталоге');
+            const existing = popular.find(p => p.productId === productId);
+            if (existing) existing.priority = priority;
+            else popular.push({ productId, priority });
+            savePopular(); renderPopular(); popularForm.reset(); showToast('Добавлено');
+        });
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-popular')) {
+                const id = Number(e.target.dataset.id);
+                popular = popular.filter(p => p.productId !== id); savePopular(); renderPopular();
+            }
+        });
+
+        // ----- ИНИЦИАЛИЗАЦИЯ -----
+        function init() {
+            loadAllData();
+            initTabs();
+            renderCatalog(); renderPromos(); renderNews(); renderCarousel(); renderPopular();
+            // авто priceStr
+            priceInput.addEventListener('blur', () => {
+                if (!priceStrInput.value && priceInput.value)
+                    priceStrInput.value = Number(priceInput.value).toLocaleString('ru-RU') + ' ₽';
+            });
+        }
+        init();
+    })();
+</script>
+</body>
+</html>

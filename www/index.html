@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Охота и Рыбалка</title>
-    <!-- Иконка для вкладки -->
+    <title>Охота и Рыбалка — главная</title>
     <link rel="icon" type="image/png" href="imges/title.png">
-    <!-- Подключение CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <!-- TOAST уведомления -->
-    <div id="toast" class="toast-message">Товар добавлен</div>
+<body class="page-index">
+    <!-- TOAST -->
+    <div id="toast" class="toast-message"></div>
 
+    <!-- ===== ШАПКА ===== -->
     <header class="header">
         <div class="header-top">
             <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
             <nav class="main-nav">
-                <a href="index.html">Главная</a>
+                <a href="index.html" class="active">Главная</a>
                 <a href="catalog.html">Каталог</a>
                 <a href="about.html">О нас</a>
                 <a href="delivery.html">Доставка</a>
@@ -28,112 +27,73 @@
                 <button id="searchBtn">Найти</button>
             </div>
             <div class="user-actions">
-                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span>
-                </a>
-                <a href="favorites.html" class="action-btn" id="favoriteBtn" title="Избранное">❤️ Избранное <span class="count" id="favoriteCount">0</span>
-                </a>
-                <a href="#" class="action-btn" id="cartBtn" title="Корзина">🛒 Корзина <span class="count" id="cartCount">0</span>
-                </a>
+                <a href="compare.html" class="action-btn" id="compareBtn">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
             </div>
         </div>
     </header>
 
+    <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
     <main class="main-content">
-        <!-- Левая часть: реклама / новости + товары -->
         <section class="promo-news">
             <h2>Акции и новости</h2>
 
-            <!-- КАРУСЕЛЬ (перелистывание) -->
+            <!-- Карусель (будет заполнена JS) -->
             <div class="carousel-container">
-                <div class="carousel-slides" id="carouselSlides">
-                    <div class="carousel-slide active">
-                        <div class="promo-banner" style="background: linear-gradient(145deg, #2c3e50, #1e2a2e);">
-                            СКИДКИ НА ОРУЖИЕ ДО 30%
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <div class="promo-banner" style="background: linear-gradient(145deg, #3e5c4b, #1f3a2c);">
-                            РЫБОЛОВНЫЕ СНАСТИ -25%
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <div class="promo-banner" style="background: linear-gradient(145deg, #5d4037, #3e2723);">
-                            ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%
-                        </div>
-                    </div>
-                </div>
-                <!-- Стрелки -->
+                <div class="carousel-slides" id="carouselSlides"></div>
                 <button class="carousel-arrow carousel-arrow-left" id="carouselPrev">❮</button>
                 <button class="carousel-arrow carousel-arrow-right" id="carouselNext">❯</button>
-                <!-- Точки-индикаторы -->
                 <div class="carousel-dots" id="carouselDots"></div>
             </div>
 
-            <div class="news-list">
-                <article class="news-item">
-                    <h3>📢 Новые поступления патронов</h3>
-                    <p>Поступила партия патронов 12 калибра от ведущих производителей.</p>
-                    <small>2 часа назад</small>
-                </article>
-                <article class="news-item">
-                    <h3>🎣 Сезонная распродажа снастей</h3>
-                    <p>Удилища и катушки со скидкой до 25%.</p>
-                    <small>Вчера</small>
-                </article>
-                <article class="news-item">
-                    <h3>🛡️ Новые бронежилеты класса Бр5</h3>
-                    <p>Поступление сертифицированных бронежилетов.</p>
-                    <small>3 дня назад</small>
-                </article>
-            </div>
+            <!-- Новости (будут заполнены JS) -->
+            <div class="news-list" id="newsList"></div>
 
-            <!-- БЛОК ТОВАРОВ (динамический) -->
+            <!-- Популярные товары -->
             <div class="products-section">
                 <div class="products-header">
                     <h2>🔥 Популярные товары</h2>
                     <span style="font-size:14px; color:#666;" id="resultCount"></span>
                 </div>
-                <div id="productsContainer" class="product-grid">
-                    <!-- JS рендерит карточки -->
-                </div>
+                <div id="productsContainer" class="product-grid"></div>
             </div>
         </section>
 
-        <!-- Правая часть: бренды + управление -->
+        <!-- Сайдбар с фильтрацией по брендам -->
         <aside class="brands-sidebar">
             <h3>
                 Популярные бренды
                 <span style="font-size:13px; font-weight:normal; color:#c49a3f; cursor:pointer;" id="resetBrandFilter">✖ сброс</span>
             </h3>
-            <div class="brand-list" id="brandListContainer">
-                <!-- динамически заполним -->
-            </div>
+            <div class="brand-list" id="brandListContainer"></div>
             <button class="reset-filters-btn" id="showAllBtn">Показать все товары</button>
             <button class="clear-counters-btn" id="clearCountersBtn">🧹 Сбросить все счетчики</button>
             <p style="font-size:12px; color:#888; margin-top:12px;">⭐ Клик по бренду — фильтр</p>
         </aside>
     </main>
 
+    <!-- ===== ПОДВАЛ ===== -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>О магазине</h4>
-                <ul>
-                    <li><a href="#">О компании</a></li>
-                    <li><a href="#">Новости</a></li>
-                    <li><a href="#">Вакансии</a></li>
-                    <li><a href="#">Политика конфиденциальности</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Покупателям</h4>
-                <ul>
-                    <li><a href="#">Как заказать</a></li>
-                    <li><a href="#">Оплата</a></li>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Возврат</a></li>
-                </ul>
-            </div>
+    <h4>О магазине</h4>
+    <ul>
+        <li><a href="about.html">О компании</a></li>
+        <li><a href="news.html">Новости</a></li>
+        <li><a href="vacancies.html">Вакансии</a></li>
+        <li><a href="privacy.html">Политика конфиденциальности</a></li>
+    </ul>
+</div>
+<div class="footer-section">
+    <h4>Покупателям</h4>
+    <ul>
+        <li><a href="howtoorder.html">Как заказать</a></li>
+        <li><a href="payment.html">Оплата</a></li>
+        <li><a href="delivery.html">Доставка</a></li>
+        <li><a href="returns.html">Возврат</a></li>
+    </ul>
+</div>
             <div class="footer-section">
                 <h4>Контакты</h4>
                 <ul>
@@ -148,6 +108,358 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- ===== ДАННЫЕ ИЗ АДМИН‑ПАНЕЛИ ===== -->
+    <script src="js/content.js"></script>
+
+    <!-- ===== ОСНОВНОЙ СКРИПТ (интегрированная версия) ===== -->
+    <script>
+        (function(){
+            "use strict";
+
+            // ---------- ЗАГРУЗКА КОНТЕНТА ИЗ АДМИНКИ ----------
+            const shop = window.shopContent || {};
+            const productsData = shop.weaponsCatalog || [];
+            window.productsData = productsData;
+
+            const newsData = shop.newsData || [];
+            const carouselSlides = shop.carouselSlides || [];
+            const popularProducts = shop.popularProducts || [];
+
+            // ---------- КЛЮЧИ LOCALSTORAGE ----------
+            const STORAGE_KEYS = {
+                COMPARE: 'huntfish_compare',
+                FAVORITE: 'huntfish_favorite',
+                CART: 'huntfish_cart'
+            };
+
+            // ---------- УТИЛИТЫ LOCALSTORAGE ----------
+            function getStorageArray(key) {
+                try { return JSON.parse(localStorage.getItem(key)) || []; }
+                catch(e) { return []; }
+            }
+
+            function setStorageArray(key, arr) {
+                localStorage.setItem(key, JSON.stringify(arr));
+                syncCountersFromStorage();
+            }
+
+            function cleanupStorage() {
+                if (!productsData.length) return;
+                const validIds = new Set(productsData.map(p => p.id));
+                [STORAGE_KEYS.COMPARE, STORAGE_KEYS.FAVORITE, STORAGE_KEYS.CART].forEach(key => {
+                    const ids = getStorageArray(key);
+                    const filtered = ids.filter(id => validIds.has(id));
+                    if (filtered.length !== ids.length) setStorageArray(key, filtered);
+                });
+            }
+
+            // ---------- ГЛОБАЛЬНЫЕ СЧЁТЧИКИ ----------
+            let compareCount = 0, favoriteCount = 0, cartCount = 0;
+            const compareCountSpan = document.getElementById('compareCount');
+            const favoriteCountSpan = document.getElementById('favoriteCount');
+            const cartCountSpan = document.getElementById('cartCount');
+
+            function syncCountersFromStorage() {
+                compareCount = getStorageArray(STORAGE_KEYS.COMPARE).length;
+                favoriteCount = getStorageArray(STORAGE_KEYS.FAVORITE).length;
+                cartCount = getStorageArray(STORAGE_KEYS.CART).length;
+                if (compareCountSpan) compareCountSpan.textContent = compareCount;
+                if (favoriteCountSpan) favoriteCountSpan.textContent = favoriteCount;
+                if (cartCountSpan) cartCountSpan.textContent = cartCount;
+            }
+
+            // ---------- TOAST ----------
+            const toastEl = document.getElementById('toast');
+            function showToast(text, duration = 2500) {
+                if (!toastEl) return;
+                toastEl.textContent = text;
+                toastEl.classList.add('show');
+                setTimeout(() => toastEl.classList.remove('show'), duration);
+            }
+
+            // ---------- ДОБАВЛЕНИЕ В СПИСКИ ----------
+            function addToCompare(productId, productName) {
+                let ids = getStorageArray(STORAGE_KEYS.COMPARE);
+                if (ids.includes(productId)) {
+                    showToast(`ℹ️ ${productName} уже в сравнении`, 2000);
+                    return false;
+                }
+                if (ids.length >= 4) {
+                    showToast(`⚠️ Можно сравнить не более 4 товаров`, 3000);
+                    return false;
+                }
+                ids.push(productId);
+                setStorageArray(STORAGE_KEYS.COMPARE, ids);
+                showToast(`⚖️ ${productName} добавлен в сравнение`);
+                return true;
+            }
+
+            function addToFavorite(productId, productName) {
+                let ids = getStorageArray(STORAGE_KEYS.FAVORITE);
+                if (ids.includes(productId)) {
+                    showToast(`ℹ️ ${productName} уже в избранном`, 2000);
+                    return false;
+                }
+                ids.push(productId);
+                setStorageArray(STORAGE_KEYS.FAVORITE, ids);
+                showToast(`❤️ ${productName} добавлен в избранное`);
+                return true;
+            }
+
+            function addToCart(productId, productName) {
+                let ids = getStorageArray(STORAGE_KEYS.CART);
+                ids.push(productId);
+                setStorageArray(STORAGE_KEYS.CART, ids);
+                showToast(`🛒 ${productName} добавлен в корзину`);
+            }
+
+            // ---------- ДЕЛЕГИРОВАНИЕ КЛИКОВ ПО КАРТОЧКАМ ----------
+            document.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                if (!card) return;
+
+                const productId = parseInt(card.dataset.id);
+                const product = productsData.find(p => p.id === productId);
+                if (!product) return;
+                const productName = product.name;
+                const productDesc = product.desc || '';
+
+                if (e.target.classList.contains('product-title')) {
+                    showToast(`📋 ${productName}: ${productDesc}`, 4000);
+                    return;
+                }
+
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const action = btn.dataset.action;
+                if (action === 'info') {
+                    showToast(`📋 ${productName}: ${productDesc}`, 4000);
+                } else if (action === 'compare') {
+                    addToCompare(productId, productName);
+                } else if (action === 'favorite') {
+                    addToFavorite(productId, productName);
+                } else if (action === 'cart') {
+                    addToCart(productId, productName);
+                }
+            });
+
+            // ---------- ЛОГОТИП ----------
+            document.getElementById('logoBtn').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            // ---------- ПОИСК ----------
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            function performSearch() {
+                const query = searchInput ? searchInput.value.trim() : '';
+                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
+            }
+            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+            // ---------- КНОПКА СБРОСА СЧЁТЧИКОВ ----------
+            document.getElementById('clearCountersBtn').addEventListener('click', () => {
+                setStorageArray(STORAGE_KEYS.COMPARE, []);
+                setStorageArray(STORAGE_KEYS.FAVORITE, []);
+                setStorageArray(STORAGE_KEYS.CART, []);
+                syncCountersFromStorage();
+                showToast('🧹 Счетчики сброшены');
+            });
+
+            // ---------- ДИНАМИЧЕСКАЯ КАРУСЕЛЬ (без кнопки, клик по слайду) ----------
+            function renderCarousel() {
+                const slidesContainer = document.getElementById('carouselSlides');
+                const dotsContainer = document.getElementById('carouselDots');
+                if (!slidesContainer) return;
+
+                // Данные слайдов (если нет из админки — дефолтные)
+                const slides = carouselSlides.length ? carouselSlides : [
+                    { id: 'd1', title: 'СКИДКИ НА ОРУЖИЕ ДО 30%', bg: 'linear-gradient(145deg, #2c3e50, #1e2a2e)', link: 'catalog.html' },
+                    { id: 'd2', title: 'РЫБОЛОВНЫЕ СНАСТИ -25%', bg: 'linear-gradient(145deg, #3e5c4b, #1f3a2c)', link: 'catalog.html' },
+                    { id: 'd3', title: 'ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%', bg: 'linear-gradient(145deg, #5d4037, #3e2723)', link: 'catalog.html' }
+                ];
+
+                slidesContainer.innerHTML = slides.map((slide, i) => `
+                    <div class="carousel-slide ${i === 0 ? 'active' : ''}" data-link="${slide.link || 'catalog.html'}" style="cursor: pointer;">
+                        <div class="promo-banner" style="background: ${slide.bg};">
+                            ${slide.title}
+                            ${slide.subtitle ? `<br><small>${slide.subtitle}</small>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                dotsContainer.innerHTML = slides.map((_, i) => `
+                    <span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>
+                `).join('');
+
+                // Обработчик клика по слайду (переход по ссылке)
+                slidesContainer.querySelectorAll('.carousel-slide').forEach(slide => {
+                    slide.addEventListener('click', (e) => {
+                        // Не переходить, если клик по стрелкам или точкам — они остановят всплытие
+                        const link = slide.dataset.link;
+                        if (link) window.location.href = link;
+                    });
+                });
+
+                // Логика карусели (стрелки, точки, автопрокрутка)
+                const prevBtn = document.getElementById('carouselPrev');
+                const nextBtn = document.getElementById('carouselNext');
+                const dots = document.querySelectorAll('.carousel-dot');
+                let currentSlide = 0;
+                let interval;
+
+                function updateSlide() {
+                    slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentSlide));
+                }
+
+                function nextSlide() { currentSlide = (currentSlide + 1) % slides.length; updateSlide(); }
+                function prevSlide() { currentSlide = (currentSlide - 1 + slides.length) % slides.length; updateSlide(); }
+                function goToSlide(idx) { currentSlide = idx; updateSlide(); }
+
+                function startAuto() { interval = setInterval(nextSlide, 5000); }
+                function stopAuto() { clearInterval(interval); }
+
+                if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevSlide(); stopAuto(); startAuto(); });
+                if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextSlide(); stopAuto(); startAuto(); });
+                dots.forEach((dot, idx) => dot.addEventListener('click', (e) => { e.stopPropagation(); goToSlide(idx); stopAuto(); startAuto(); }));
+
+                const carousel = document.querySelector('.carousel-container');
+                if (carousel) {
+                    carousel.addEventListener('mouseenter', stopAuto);
+                    carousel.addEventListener('mouseleave', startAuto);
+                }
+                startAuto();
+            }
+
+            // ---------- ДИНАМИЧЕСКИЕ НОВОСТИ ----------
+            function renderNews() {
+                const newsList = document.getElementById('newsList');
+                if (!newsList) return;
+
+                const items = newsData.length ? newsData : [
+                    { id: 'n1', title: '📢 Новые поступления патронов', text: 'Поступила партия патронов 12 калибра.', date: '2 часа назад' },
+                    { id: 'n2', title: '🎣 Сезонная распродажа снастей', text: 'Удилища и катушки со скидкой до 25%.', date: 'Вчера' },
+                    { id: 'n3', title: '🛡️ Новые бронежилеты класса Бр5', text: 'Поступление сертифицированных бронежилетов.', date: '3 дня назад' }
+                ];
+
+                newsList.innerHTML = items.map(item => `
+                    <article class="news-item">
+                        <h3>${item.title}</h3>
+                        <p>${item.text}</p>
+                        <small>${item.date || ''}</small>
+                    </article>
+                `).join('');
+            }
+
+            // ---------- ФИЛЬТРАЦИЯ И РЕНДЕР ТОВАРОВ ----------
+            const productsContainer = document.getElementById('productsContainer');
+            const brandListEl = document.getElementById('brandListContainer');
+            const resultCountSpan = document.getElementById('resultCount');
+            const resetBrandSpan = document.getElementById('resetBrandFilter');
+            const showAllBtn = document.getElementById('showAllBtn');
+
+            let currentFilterBrand = null;
+            const allBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))];
+
+            function renderBrandList() {
+                if (!brandListEl) return;
+                brandListEl.innerHTML = allBrands.map(brand => 
+                    `<div class="brand-item ${currentFilterBrand === brand ? 'active' : ''}" data-brand="${brand}">${brand}</div>`
+                ).join('');
+            }
+
+            function getPopularProductIds() {
+                return popularProducts
+                    .sort((a, b) => (a.priority || 99) - (b.priority || 99))
+                    .map(p => p.productId);
+            }
+
+            function getFilteredProducts() {
+                let filtered = productsData.filter(p => !currentFilterBrand || p.brand === currentFilterBrand);
+                if (popularProducts.length) {
+                    const popularIds = getPopularProductIds();
+                    filtered = filtered.filter(p => popularIds.includes(p.id))
+                                       .sort((a, b) => popularIds.indexOf(a.id) - popularIds.indexOf(b.id));
+                }
+                return filtered;
+            }
+
+            function renderProducts() {
+                if (!productsContainer) return;
+                const filtered = getFilteredProducts();
+                if (!filtered.length) {
+                    productsContainer.innerHTML = `<div class="no-products" style="grid-column:1/-1; padding:20px;">😕 Товары не найдены</div>`;
+                    if (resultCountSpan) resultCountSpan.textContent = '';
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach(prod => {
+                    const bg = prod.imgFile ? `background-image:url('imges/${prod.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
+                    html += `<div class="product-card" data-id="${prod.id}" data-desc="${prod.desc || ''}">
+                        <div class="product-image" style="${bg}">${!prod.imgFile ? prod.imgLabel || prod.brand : ''}</div>
+                        <div class="product-title">${prod.name}</div>
+                        <div class="product-brand">${prod.brand || ''}</div>
+                        <div class="product-price">${prod.priceStr || (prod.price ? prod.price.toLocaleString('ru-RU') + ' ₽' : '')}</div>
+                        <div class="card-actions">
+                            <button class="card-btn" data-action="info">ℹ️</button>
+                            <button class="card-btn" data-action="compare">⚖️</button>
+                            <button class="card-btn" data-action="favorite">❤️</button>
+                            <button class="card-btn" data-action="cart">🛒</button>
+                        </div>
+                    </div>`;
+                });
+                productsContainer.innerHTML = html;
+                if (resultCountSpan) resultCountSpan.textContent = `найдено: ${filtered.length}`;
+            }
+
+            function refreshIndex() {
+                renderBrandList();
+                renderProducts();
+            }
+
+            if (brandListEl) {
+                brandListEl.addEventListener('click', e => {
+                    const item = e.target.closest('.brand-item');
+                    if (!item) return;
+                    const brand = item.dataset.brand;
+                    currentFilterBrand = currentFilterBrand === brand ? null : brand;
+                    refreshIndex();
+                    showToast(currentFilterBrand ? `🎯 Бренд: ${currentFilterBrand}` : 'Все бренды');
+                });
+            }
+
+            if (resetBrandSpan) {
+                resetBrandSpan.addEventListener('click', () => {
+                    currentFilterBrand = null;
+                    refreshIndex();
+                    showToast('Фильтр сброшен');
+                });
+            }
+
+            if (showAllBtn) {
+                showAllBtn.addEventListener('click', () => {
+                    currentFilterBrand = null;
+                    if (searchInput) searchInput.value = '';
+                    refreshIndex();
+                    showToast('Все товары');
+                });
+            }
+
+            // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+            function init() {
+                cleanupStorage();
+                syncCountersFromStorage();
+                renderCarousel();
+                renderNews();
+                renderBrandList();
+                renderProducts();
+            }
+
+            init();
+        })();
+    </script>
 </body>
 </html>

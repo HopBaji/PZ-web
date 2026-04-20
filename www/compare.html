@@ -25,9 +25,9 @@
                 <button id="searchBtn">Найти</button>
             </div>
             <div class="user-actions">
-                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="compare.html" class="action-btn" id="compareBtn">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
                 <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
-                <a href="#" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+                <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
             </div>
         </div>
     </header>
@@ -39,30 +39,30 @@
         </section>
 
         <div id="compareContent" class="compare-container">
-    <!-- JS заполнит это -->
-</div>
+            <!-- JS заполнит таблицу сравнения -->
+        </div>
     </main>
 
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>О магазине</h4>
-                <ul>
-                    <li><a href="about.html">О компании</a></li>
-                    <li><a href="#">Новости</a></li>
-                    <li><a href="#">Вакансии</a></li>
-                    <li><a href="#">Политика конфиденциальности</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Покупателям</h4>
-                <ul>
-                    <li><a href="#">Как заказать</a></li>
-                    <li><a href="#">Оплата</a></li>
-                    <li><a href="delivery.html">Доставка</a></li>
-                    <li><a href="#">Возврат</a></li>
-                </ul>
-            </div>
+    <h4>О магазине</h4>
+    <ul>
+        <li><a href="about.html">О компании</a></li>
+        <li><a href="news.html">Новости</a></li>
+        <li><a href="vacancies.html">Вакансии</a></li>
+        <li><a href="privacy.html">Политика конфиденциальности</a></li>
+    </ul>
+</div>
+<div class="footer-section">
+    <h4>Покупателям</h4>
+    <ul>
+        <li><a href="howtoorder.html">Как заказать</a></li>
+        <li><a href="payment.html">Оплата</a></li>
+        <li><a href="delivery.html">Доставка</a></li>
+        <li><a href="returns.html">Возврат</a></li>
+    </ul>
+</div>
             <div class="footer-section">
                 <h4>Контакты</h4>
                 <ul>
@@ -75,6 +75,205 @@
         <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- Данные из админ‑панели -->
+    <script src="js/content.js"></script>
+
+    <!-- Встроенный скрипт страницы сравнения -->
+    <script>
+        (function(){
+            "use strict";
+
+            // ---------- ПОЛУЧЕНИЕ ДАННЫХ ----------
+            const shop = window.shopContent || {};
+            const productsData = shop.weaponsCatalog || [];
+            window.productsData = productsData;   // для совместимости
+
+            // ---------- КЛЮЧИ LOCALSTORAGE ----------
+            const STORAGE_KEYS = {
+                COMPARE: 'huntfish_compare',
+                FAVORITE: 'huntfish_favorite',
+                CART: 'huntfish_cart'
+            };
+
+            // ---------- УТИЛИТЫ LOCALSTORAGE ----------
+            function getStorageArray(key) {
+                try { return JSON.parse(localStorage.getItem(key)) || []; }
+                catch(e) { return []; }
+            }
+
+            function setStorageArray(key, arr) {
+                localStorage.setItem(key, JSON.stringify(arr));
+                syncCountersFromStorage();
+            }
+
+            // ---------- СЧЁТЧИКИ ----------
+            let compareCount = 0, favoriteCount = 0, cartCount = 0;
+            const compareCountSpan = document.getElementById('compareCount');
+            const favoriteCountSpan = document.getElementById('favoriteCount');
+            const cartCountSpan = document.getElementById('cartCount');
+
+            function syncCountersFromStorage() {
+                compareCount = getStorageArray(STORAGE_KEYS.COMPARE).length;
+                favoriteCount = getStorageArray(STORAGE_KEYS.FAVORITE).length;
+                cartCount = getStorageArray(STORAGE_KEYS.CART).length;
+                if (compareCountSpan) compareCountSpan.textContent = compareCount;
+                if (favoriteCountSpan) favoriteCountSpan.textContent = favoriteCount;
+                if (cartCountSpan) cartCountSpan.textContent = cartCount;
+            }
+
+            // Очистка невалидных ID (если товар удалён из каталога)
+            function cleanupStorage() {
+                if (!productsData.length) return;
+                const validIds = new Set(productsData.map(p => p.id));
+                [STORAGE_KEYS.COMPARE, STORAGE_KEYS.FAVORITE, STORAGE_KEYS.CART].forEach(key => {
+                    const ids = getStorageArray(key);
+                    const filtered = ids.filter(id => validIds.has(id));
+                    if (filtered.length !== ids.length) setStorageArray(key, filtered);
+                });
+            }
+
+            // ---------- TOAST ----------
+            const toastEl = document.getElementById('toast');
+            function showToast(text, duration = 2500) {
+                if (!toastEl) return;
+                toastEl.textContent = text;
+                toastEl.classList.add('show');
+                setTimeout(() => toastEl.classList.remove('show'), duration);
+            }
+
+            // ---------- ДОБАВЛЕНИЕ В КОРЗИНУ (используется из таблицы) ----------
+            function addToCart(productId, productName) {
+                let ids = getStorageArray(STORAGE_KEYS.CART);
+                ids.push(productId);
+                setStorageArray(STORAGE_KEYS.CART, ids);
+                showToast(`🛒 ${productName} добавлен в корзину`);
+            }
+
+            // Удаление из сравнения
+            function removeFromCompare(productId) {
+                let ids = getStorageArray(STORAGE_KEYS.COMPARE);
+                ids = ids.filter(id => id !== productId);
+                setStorageArray(STORAGE_KEYS.COMPARE, ids);
+            }
+
+            // ---------- РЕНДЕР ТАБЛИЦЫ СРАВНЕНИЯ ----------
+            const container = document.getElementById('compareContent');
+
+            function renderComparePage() {
+                if (!container) return;
+                const ids = getStorageArray(STORAGE_KEYS.COMPARE);
+                const prods = productsData.filter(p => ids.includes(p.id));
+
+                if (!prods.length) {
+                    container.innerHTML = `<div class="empty-compare"><p>😕 Нет товаров для сравнения</p><a href="catalog.html">В каталог</a></div>`;
+                    return;
+                }
+
+                let html = `<table class="compare-table"><thead><tr><th>Характеристика</th>`;
+                prods.forEach(p => html += `<th>${p.name}</th>`);
+                html += `</tr></thead><tbody>`;
+
+                // Изображение
+                html += `<tr><td><strong>Изображение</strong></td>`;
+                prods.forEach(p => {
+                    const style = p.imgFile ? `background-image:url('imges/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : `background:#b8aa92;`;
+                    html += `<td><div class="compare-product-image" style="${style}">${!p.imgFile ? p.imgLabel || p.brand : ''}</div></td>`;
+                });
+                html += `</tr>`;
+
+                // Бренд
+                html += `<tr><td><strong>Бренд</strong></td>`;
+                prods.forEach(p => html += `<td>${p.brand || '—'}</td>`);
+                html += `</tr>`;
+
+                // Категория
+                html += `<tr><td><strong>Категория</strong></td>`;
+                prods.forEach(p => html += `<td>${p.category || '—'}</td>`);
+                html += `</tr>`;
+
+                // Цена
+                html += `<tr><td><strong>Цена</strong></td>`;
+                prods.forEach(p => {
+                    const priceDisplay = p.priceStr || (p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : '—');
+                    html += `<td class="compare-product-price">${priceDisplay}</td>`;
+                });
+                html += `</tr>`;
+
+                // Описание
+                html += `<tr><td><strong>Описание</strong></td>`;
+                prods.forEach(p => html += `<td>${p.desc || '—'}</td>`);
+                html += `</tr>`;
+
+                // Действия
+                html += `<tr><td><strong>Действия</strong></td>`;
+                prods.forEach(p => {
+                    html += `<td>
+                        <button class="remove-from-compare" data-id="${p.id}">❌ Удалить</button>
+                        <button class="add-to-cart-btn" data-id="${p.id}">🛒 В корзину</button>
+                    </td>`;
+                });
+                html += `</tr></tbody></table>`;
+
+                container.innerHTML = html;
+
+                // Обработчики удаления
+                container.querySelectorAll('.remove-from-compare').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(btn.dataset.id);
+                        removeFromCompare(id);
+                        renderComparePage();
+                        showToast('Удалено из сравнения');
+                    });
+                });
+
+                // Обработчики добавления в корзину
+                container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(btn.dataset.id);
+                        const product = productsData.find(p => p.id === id);
+                        if (product) {
+                            addToCart(id, product.name);
+                        }
+                    });
+                });
+            }
+
+            // ---------- ЛОГОТИП ----------
+            document.getElementById('logoBtn').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            // ---------- ПОИСК (ГЛОБАЛЬНЫЙ) ----------
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            function performSearch() {
+                const query = searchInput ? searchInput.value.trim() : '';
+                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
+            }
+            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+            // ---------- КНОПКА КОРЗИНЫ (ПЕРЕХОД) ----------
+            const cartBtn = document.getElementById('cartBtn');
+            if (cartBtn) {
+                cartBtn.addEventListener('click', (e) => {
+                    const href = cartBtn.getAttribute('href');
+                    if (!href || href === '#') {
+                        e.preventDefault();
+                        window.location.href = 'cart.html';
+                    }
+                });
+            }
+
+            // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+            function init() {
+                cleanupStorage();
+                syncCountersFromStorage();
+                renderComparePage();
+            }
+
+            init();
+        })();
+    </script>
 </body>
 </html>
