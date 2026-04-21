@@ -6,12 +6,30 @@
     <title>Охота и Рыбалка — главная</title>
     <link rel="icon" type="image/png" href="imges/title.png">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 20px; }
+        .brand-item { padding: 10px; background: #f0ede8; border-radius: 12px; text-align: center; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+        .brand-item.active { background: #c49a3f; color: #1e2a2e; font-weight: bold; }
+        .brand-item:hover { background: #dbb160; }
+        .reset-filters-btn, .clear-counters-btn { background: #c49a3f; border: none; color: #1e2a2e; padding: 10px; border-radius: 40px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        .promo-news { background: #fffaf3; border-radius: 20px; padding: 20px; }
+        .carousel-container { position: relative; margin-bottom: 20px; overflow: hidden; border-radius: 16px; }
+        .carousel-slides { display: flex; transition: transform 0.4s ease; }
+        .carousel-slide { min-width: 100%; cursor: pointer; }
+        .promo-banner { height: 200px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold; text-align: center; background-size: cover; }
+        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+        .carousel-arrow-left { left: 10px; }
+        .carousel-arrow-right { right: 10px; }
+        .carousel-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+        .carousel-dot { width: 10px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 50%; cursor: pointer; }
+        .carousel-dot.active { background: #c49a3f; }
+        .news-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .news-item h3 { margin-bottom: 5px; }
+    </style>
 </head>
 <body class="page-index">
-    <!-- TOAST -->
     <div id="toast" class="toast-message"></div>
 
-    <!-- ===== ШАПКА ===== -->
     <header class="header">
         <div class="header-top">
             <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
@@ -34,431 +52,289 @@
         </div>
     </header>
 
-    <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
     <main class="main-content">
         <section class="promo-news">
             <h2>Акции и новости</h2>
-
-            <!-- Карусель (будет заполнена JS) -->
             <div class="carousel-container">
                 <div class="carousel-slides" id="carouselSlides"></div>
                 <button class="carousel-arrow carousel-arrow-left" id="carouselPrev">❮</button>
                 <button class="carousel-arrow carousel-arrow-right" id="carouselNext">❯</button>
                 <div class="carousel-dots" id="carouselDots"></div>
             </div>
-
-            <!-- Новости (будут заполнены JS) -->
             <div class="news-list" id="newsList"></div>
-
-            <!-- Популярные товары -->
             <div class="products-section">
-                <div class="products-header">
-                    <h2>🔥 Популярные товары</h2>
-                    <span style="font-size:14px; color:#666;" id="resultCount"></span>
-                </div>
+                <div class="products-header"><h2>🔥 Популярные товары</h2><span id="resultCount" style="font-size:14px; color:#666;"></span></div>
                 <div id="productsContainer" class="product-grid"></div>
             </div>
         </section>
 
-        <!-- Сайдбар с фильтрацией по брендам -->
         <aside class="brands-sidebar">
-            <h3>
-                Популярные бренды
-                <span style="font-size:13px; font-weight:normal; color:#c49a3f; cursor:pointer;" id="resetBrandFilter">✖ сброс</span>
-            </h3>
+            <h3>Популярные бренды <span style="font-size:13px; font-weight:normal; color:#c49a3f; cursor:pointer;" id="resetBrandFilter">✖ сброс</span></h3>
             <div class="brand-list" id="brandListContainer"></div>
             <button class="reset-filters-btn" id="showAllBtn">Показать все товары</button>
             <button class="clear-counters-btn" id="clearCountersBtn">🧹 Сбросить все счетчики</button>
-            <p style="font-size:12px; color:#888; margin-top:12px;">⭐ Клик по бренду — фильтр</p>
         </aside>
     </main>
 
-    <!-- ===== ПОДВАЛ ===== -->
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section">
-    <h4>О магазине</h4>
-    <ul>
-        <li><a href="about.html">О компании</a></li>
-        <li><a href="news.html">Новости</a></li>
-        <li><a href="vacancies.html">Вакансии</a></li>
-        <li><a href="privacy.html">Политика конфиденциальности</a></li>
-    </ul>
-</div>
-<div class="footer-section">
-    <h4>Покупателям</h4>
-    <ul>
-        <li><a href="howtoorder.html">Как заказать</a></li>
-        <li><a href="payment.html">Оплата</a></li>
-        <li><a href="delivery.html">Доставка</a></li>
-        <li><a href="returns.html">Возврат</a></li>
-    </ul>
-</div>
-            <div class="footer-section">
-                <h4>Контакты</h4>
-                <ul>
-                    <li>📞 8 (800) 123-45-67</li>
-                    <li>✉️ info@huntfish.ru</li>
-                    <li>📍 г. Москва, ул. Охотничья, 15</li>
-                </ul>
-            </div>
+            <div class="footer-section"><h4>О магазине</h4><ul><li><a href="about.html">О компании</a></li><li><a href="news.html">Новости</a></li><li><a href="vacancies.html">Вакансии</a></li><li><a href="privacy.html">Политика конфиденциальности</a></li></ul></div>
+            <div class="footer-section"><h4>Покупателям</h4><ul><li><a href="howtoorder.html">Как заказать</a></li><li><a href="payment.html">Оплата</a></li><li><a href="delivery.html">Доставка</a></li><li><a href="returns.html">Возврат</a></li></ul></div>
+            <div class="footer-section"><h4>Контакты</h4><ul><li>📞 8 (800) 123-45-67</li><li>✉️ info@huntfish.ru</li><li>📍 г. Москва, ул. Охотничья, 15</li></ul></div>
         </div>
-        <div class="copyright">
-            © 2026 Охотничий и рыболовный магазин. Все права защищены.
-        </div>
+        <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
 
-    <!-- ===== ДАННЫЕ ИЗ АДМИН‑ПАНЕЛИ ===== -->
     <script src="js/content.js"></script>
-
-    <!-- ===== ОСНОВНОЙ СКРИПТ (интегрированная версия) ===== -->
     <script>
         (function(){
             "use strict";
 
-            // ---------- ЗАГРУЗКА КОНТЕНТА ИЗ АДМИНКИ ----------
-            const shop = window.shopContent || {};
-            const productsData = shop.weaponsCatalog || [];
+            // ---------- ЗАГРУЗКА ДАННЫХ ----------
+            let productsData = [];
+            let newsData = [];
+            let slidesData = [];
+            let popularData = [];
+
+            const storedWeapons = localStorage.getItem('weapons_catalog');
+            if (storedWeapons) productsData = JSON.parse(storedWeapons);
+            else if (window.shopContent?.weaponsCatalog) productsData = window.shopContent.weaponsCatalog;
+
+            const storedNews = localStorage.getItem('admin_news');
+            if (storedNews) newsData = JSON.parse(storedNews);
+            else if (window.shopContent?.newsData) newsData = window.shopContent.newsData;
+
+            const storedSlides = localStorage.getItem('admin_carousel');
+            if (storedSlides) slidesData = JSON.parse(storedSlides);
+            else if (window.shopContent?.carouselSlides) slidesData = window.shopContent.carouselSlides;
+
+            const storedPopular = localStorage.getItem('admin_popular');
+            if (storedPopular) popularData = JSON.parse(storedPopular);
+            else if (window.shopContent?.popularProducts) popularData = window.shopContent.popularProducts;
+
             window.productsData = productsData;
+            console.log('✅ productsData загружено, количество:', productsData.length);
 
-            const newsData = shop.newsData || [];
-            const carouselSlides = shop.carouselSlides || [];
-            const popularProducts = shop.popularProducts || [];
-
-            // ---------- КЛЮЧИ LOCALSTORAGE ----------
+            // ---------- КЛЮЧИ LOCALSTORAGE (ЕДИНЫЕ ДЛЯ ВСЕХ СТРАНИЦ) ----------
             const STORAGE_KEYS = {
                 COMPARE: 'huntfish_compare',
                 FAVORITE: 'huntfish_favorite',
                 CART: 'huntfish_cart'
             };
 
-            // ---------- УТИЛИТЫ LOCALSTORAGE ----------
             function getStorageArray(key) {
-                try { return JSON.parse(localStorage.getItem(key)) || []; }
-                catch(e) { return []; }
+                try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
             }
 
             function setStorageArray(key, arr) {
                 localStorage.setItem(key, JSON.stringify(arr));
-                syncCountersFromStorage();
+                syncCounters();
             }
 
-            function cleanupStorage() {
-                if (!productsData.length) return;
-                const validIds = new Set(productsData.map(p => p.id));
-                [STORAGE_KEYS.COMPARE, STORAGE_KEYS.FAVORITE, STORAGE_KEYS.CART].forEach(key => {
-                    const ids = getStorageArray(key);
-                    const filtered = ids.filter(id => validIds.has(id));
-                    if (filtered.length !== ids.length) setStorageArray(key, filtered);
-                });
+            function syncCounters() {
+                const compareSpan = document.getElementById('compareCount');
+                const favoriteSpan = document.getElementById('favoriteCount');
+                const cartSpan = document.getElementById('cartCount');
+                if (compareSpan) compareSpan.textContent = getStorageArray(STORAGE_KEYS.COMPARE).length;
+                if (favoriteSpan) favoriteSpan.textContent = getStorageArray(STORAGE_KEYS.FAVORITE).length;
+                if (cartSpan) cartSpan.textContent = getStorageArray(STORAGE_KEYS.CART).length;
             }
 
-            // ---------- ГЛОБАЛЬНЫЕ СЧЁТЧИКИ ----------
-            let compareCount = 0, favoriteCount = 0, cartCount = 0;
-            const compareCountSpan = document.getElementById('compareCount');
-            const favoriteCountSpan = document.getElementById('favoriteCount');
-            const cartCountSpan = document.getElementById('cartCount');
-
-            function syncCountersFromStorage() {
-                compareCount = getStorageArray(STORAGE_KEYS.COMPARE).length;
-                favoriteCount = getStorageArray(STORAGE_KEYS.FAVORITE).length;
-                cartCount = getStorageArray(STORAGE_KEYS.CART).length;
-                if (compareCountSpan) compareCountSpan.textContent = compareCount;
-                if (favoriteCountSpan) favoriteCountSpan.textContent = favoriteCount;
-                if (cartCountSpan) cartCountSpan.textContent = cartCount;
+            function showToast(msg, duration=2500) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), duration);
             }
 
-            // ---------- TOAST ----------
-            const toastEl = document.getElementById('toast');
-            function showToast(text, duration = 2500) {
-                if (!toastEl) return;
-                toastEl.textContent = text;
-                toastEl.classList.add('show');
-                setTimeout(() => toastEl.classList.remove('show'), duration);
-            }
-
-            // ---------- ДОБАВЛЕНИЕ В СПИСКИ ----------
-            function addToCompare(productId, productName) {
-                let ids = getStorageArray(STORAGE_KEYS.COMPARE);
-                if (ids.includes(productId)) {
-                    showToast(`ℹ️ ${productName} уже в сравнении`, 2000);
+            // ---------- ФУНКЦИИ ДОБАВЛЕНИЯ (ГЛОБАЛЬНЫЕ, ПРАВИЛЬНЫЕ КЛЮЧИ) ----------
+            window.addToCompare = function(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.COMPARE);
+                if (arr.includes(id)) {
+                    showToast(`ℹ️ ${name} уже в сравнении`);
                     return false;
                 }
-                if (ids.length >= 4) {
-                    showToast(`⚠️ Можно сравнить не более 4 товаров`, 3000);
+                if (arr.length >= 4) {
+                    showToast(`⚠️ Можно сравнить не более 4 товаров`);
                     return false;
                 }
-                ids.push(productId);
-                setStorageArray(STORAGE_KEYS.COMPARE, ids);
-                showToast(`⚖️ ${productName} добавлен в сравнение`);
+                arr.push(id);
+                setStorageArray(STORAGE_KEYS.COMPARE, arr);
+                showToast(`⚖️ ${name} добавлен в сравнение`);
                 return true;
-            }
+            };
 
-            function addToFavorite(productId, productName) {
-                let ids = getStorageArray(STORAGE_KEYS.FAVORITE);
-                if (ids.includes(productId)) {
-                    showToast(`ℹ️ ${productName} уже в избранном`, 2000);
+            window.addToFavorite = function(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.FAVORITE);
+                if (arr.includes(id)) {
+                    showToast(`ℹ️ ${name} уже в избранном`);
                     return false;
                 }
-                ids.push(productId);
-                setStorageArray(STORAGE_KEYS.FAVORITE, ids);
-                showToast(`❤️ ${productName} добавлен в избранное`);
+                arr.push(id);
+                setStorageArray(STORAGE_KEYS.FAVORITE, arr);
+                showToast(`❤️ ${name} добавлен в избранное`);
                 return true;
-            }
+            };
 
-            function addToCart(productId, productName) {
-                let ids = getStorageArray(STORAGE_KEYS.CART);
-                ids.push(productId);
-                setStorageArray(STORAGE_KEYS.CART, ids);
-                showToast(`🛒 ${productName} добавлен в корзину`);
-            }
+            window.addToCart = function(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.CART);
+                arr.push(id);
+                setStorageArray(STORAGE_KEYS.CART, arr);
+                showToast(`🛒 ${name} добавлен в корзину`);
+            };
 
-            // ---------- ДЕЛЕГИРОВАНИЕ КЛИКОВ ПО КАРТОЧКАМ ----------
-            document.addEventListener('click', (e) => {
-                const card = e.target.closest('.product-card');
-                if (!card) return;
-
-                const productId = parseInt(card.dataset.id);
-                const product = productsData.find(p => p.id === productId);
-                if (!product) return;
-                const productName = product.name;
-                const productDesc = product.desc || '';
-
-                if (e.target.classList.contains('product-title')) {
-                    showToast(`📋 ${productName}: ${productDesc}`, 4000);
-                    return;
-                }
-
-                const btn = e.target.closest('button');
-                if (!btn) return;
-                const action = btn.dataset.action;
-                if (action === 'info') {
-                    showToast(`📋 ${productName}: ${productDesc}`, 4000);
-                } else if (action === 'compare') {
-                    addToCompare(productId, productName);
-                } else if (action === 'favorite') {
-                    addToFavorite(productId, productName);
-                } else if (action === 'cart') {
-                    addToCart(productId, productName);
-                }
-            });
-
-            // ---------- ЛОГОТИП ----------
-            document.getElementById('logoBtn').addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-
-            // ---------- ПОИСК ----------
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            function performSearch() {
-                const query = searchInput ? searchInput.value.trim() : '';
-                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
-            }
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-
-            // ---------- КНОПКА СБРОСА СЧЁТЧИКОВ ----------
-            document.getElementById('clearCountersBtn').addEventListener('click', () => {
-                setStorageArray(STORAGE_KEYS.COMPARE, []);
-                setStorageArray(STORAGE_KEYS.FAVORITE, []);
-                setStorageArray(STORAGE_KEYS.CART, []);
-                syncCountersFromStorage();
-                showToast('🧹 Счетчики сброшены');
-            });
-
-            // ---------- ДИНАМИЧЕСКАЯ КАРУСЕЛЬ (без кнопки, клик по слайду) ----------
+            // ---------- КАРУСЕЛЬ ----------
             function renderCarousel() {
-                const slidesContainer = document.getElementById('carouselSlides');
+                const slides = slidesData.length ? slidesData : [
+                    { title: 'СКИДКИ НА ОРУЖИЕ ДО 30%', bg: 'linear-gradient(145deg, #2c3e50, #1e2a2e)', link: 'catalog.html' },
+                    { title: 'РЫБОЛОВНЫЕ СНАСТИ -25%', bg: 'linear-gradient(145deg, #3e5c4b, #1f3a2c)', link: 'catalog.html' },
+                    { title: 'ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%', bg: 'linear-gradient(145deg, #5d4037, #3e2723)', link: 'catalog.html' }
+                ];
+                const container = document.getElementById('carouselSlides');
                 const dotsContainer = document.getElementById('carouselDots');
-                if (!slidesContainer) return;
-
-                // Данные слайдов (если нет из админки — дефолтные)
-                const slides = carouselSlides.length ? carouselSlides : [
-                    { id: 'd1', title: 'СКИДКИ НА ОРУЖИЕ ДО 30%', bg: 'linear-gradient(145deg, #2c3e50, #1e2a2e)', link: 'catalog.html' },
-                    { id: 'd2', title: 'РЫБОЛОВНЫЕ СНАСТИ -25%', bg: 'linear-gradient(145deg, #3e5c4b, #1f3a2c)', link: 'catalog.html' },
-                    { id: 'd3', title: 'ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%', bg: 'linear-gradient(145deg, #5d4037, #3e2723)', link: 'catalog.html' }
-                ];
-
-                slidesContainer.innerHTML = slides.map((slide, i) => `
-                    <div class="carousel-slide ${i === 0 ? 'active' : ''}" data-link="${slide.link || 'catalog.html'}" style="cursor: pointer;">
-                        <div class="promo-banner" style="background: ${slide.bg};">
-                            ${slide.title}
-                            ${slide.subtitle ? `<br><small>${slide.subtitle}</small>` : ''}
-                        </div>
-                    </div>
-                `).join('');
-
-                dotsContainer.innerHTML = slides.map((_, i) => `
-                    <span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>
-                `).join('');
-
-                // Обработчик клика по слайду (переход по ссылке)
-                slidesContainer.querySelectorAll('.carousel-slide').forEach(slide => {
-                    slide.addEventListener('click', (e) => {
-                        // Не переходить, если клик по стрелкам или точкам — они остановят всплытие
-                        const link = slide.dataset.link;
-                        if (link) window.location.href = link;
-                    });
-                });
-
-                // Логика карусели (стрелки, точки, автопрокрутка)
-                const prevBtn = document.getElementById('carouselPrev');
-                const nextBtn = document.getElementById('carouselNext');
-                const dots = document.querySelectorAll('.carousel-dot');
-                let currentSlide = 0;
-                let interval;
-
-                function updateSlide() {
-                    slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
-                    dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentSlide));
-                }
-
-                function nextSlide() { currentSlide = (currentSlide + 1) % slides.length; updateSlide(); }
-                function prevSlide() { currentSlide = (currentSlide - 1 + slides.length) % slides.length; updateSlide(); }
-                function goToSlide(idx) { currentSlide = idx; updateSlide(); }
-
-                function startAuto() { interval = setInterval(nextSlide, 5000); }
-                function stopAuto() { clearInterval(interval); }
-
-                if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevSlide(); stopAuto(); startAuto(); });
-                if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextSlide(); stopAuto(); startAuto(); });
-                dots.forEach((dot, idx) => dot.addEventListener('click', (e) => { e.stopPropagation(); goToSlide(idx); stopAuto(); startAuto(); }));
-
-                const carousel = document.querySelector('.carousel-container');
-                if (carousel) {
-                    carousel.addEventListener('mouseenter', stopAuto);
-                    carousel.addEventListener('mouseleave', startAuto);
-                }
-                startAuto();
+                if (!container || !dotsContainer) return;
+                container.innerHTML = slides.map(s => `<div class="carousel-slide" data-link="${s.link}"><div class="promo-banner" style="background: ${s.bg};">${s.title}</div></div>`).join('');
+                dotsContainer.innerHTML = slides.map((_, i) => `<span class="carousel-dot" data-index="${i}"></span>`).join('');
+                let current = 0, total = slides.length, interval;
+                const updateSlide = () => { container.style.transform = `translateX(-${current*100}%)`; document.querySelectorAll('.carousel-dot').forEach((dot,i)=>dot.classList.toggle('active',i===current)); };
+                const next = () => { current = (current+1)%total; updateSlide(); };
+                const prev = () => { current = (current-1+total)%total; updateSlide(); };
+                const startAuto = () => { interval = setInterval(next, 5000); };
+                const stopAuto = () => clearInterval(interval);
+                document.getElementById('carouselNext')?.addEventListener('click', (e) => { e.stopPropagation(); stopAuto(); next(); startAuto(); });
+                document.getElementById('carouselPrev')?.addEventListener('click', (e) => { e.stopPropagation(); stopAuto(); prev(); startAuto(); });
+                document.querySelectorAll('.carousel-dot').forEach(dot => dot.addEventListener('click', (e) => { e.stopPropagation(); stopAuto(); current = parseInt(e.target.dataset.index); updateSlide(); startAuto(); }));
+                container.querySelectorAll('.carousel-slide').forEach(slide => slide.addEventListener('click', () => window.location.href = slide.dataset.link));
+                updateSlide(); startAuto();
             }
 
-            // ---------- ДИНАМИЧЕСКИЕ НОВОСТИ ----------
+            // ---------- НОВОСТИ ----------
             function renderNews() {
-                const newsList = document.getElementById('newsList');
-                if (!newsList) return;
-
+                const container = document.getElementById('newsList');
+                if (!container) return;
                 const items = newsData.length ? newsData : [
-                    { id: 'n1', title: '📢 Новые поступления патронов', text: 'Поступила партия патронов 12 калибра.', date: '2 часа назад' },
-                    { id: 'n2', title: '🎣 Сезонная распродажа снастей', text: 'Удилища и катушки со скидкой до 25%.', date: 'Вчера' },
-                    { id: 'n3', title: '🛡️ Новые бронежилеты класса Бр5', text: 'Поступление сертифицированных бронежилетов.', date: '3 дня назад' }
+                    { title: '📢 Новые поступления патронов', text: 'Поступила партия патронов 12 калибра.', date: '2 часа назад' },
+                    { title: '🎣 Сезонная распродажа снастей', text: 'Удилища и катушки со скидкой до 25%.', date: 'Вчера' },
+                    { title: '🛡️ Новые бронежилеты класса Бр5', text: 'Поступление сертифицированных бронежилетов.', date: '3 дня назад' }
                 ];
-
-                newsList.innerHTML = items.map(item => `
-                    <article class="news-item">
-                        <h3>${item.title}</h3>
-                        <p>${item.text}</p>
-                        <small>${item.date || ''}</small>
-                    </article>
-                `).join('');
+                container.innerHTML = items.map(n => `<div class="news-item"><h3>${escapeHtml(n.title)}</h3><p>${escapeHtml(n.text)}</p><small>${escapeHtml(n.date || '')}</small></div>`).join('');
             }
 
-            // ---------- ФИЛЬТРАЦИЯ И РЕНДЕР ТОВАРОВ ----------
-            const productsContainer = document.getElementById('productsContainer');
-            const brandListEl = document.getElementById('brandListContainer');
-            const resultCountSpan = document.getElementById('resultCount');
-            const resetBrandSpan = document.getElementById('resetBrandFilter');
-            const showAllBtn = document.getElementById('showAllBtn');
-
-            let currentFilterBrand = null;
+            // ---------- ПОПУЛЯРНЫЕ ТОВАРЫ ----------
+            let currentBrandFilter = null;
             const allBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))];
 
-            function renderBrandList() {
-                if (!brandListEl) return;
-                brandListEl.innerHTML = allBrands.map(brand => 
-                    `<div class="brand-item ${currentFilterBrand === brand ? 'active' : ''}" data-brand="${brand}">${brand}</div>`
-                ).join('');
-            }
-
             function getPopularProductIds() {
-                return popularProducts
-                    .sort((a, b) => (a.priority || 99) - (b.priority || 99))
-                    .map(p => p.productId);
+                return [...popularData].sort((a,b) => (a.priority||99) - (b.priority||99)).map(p => p.productId);
             }
 
             function getFilteredProducts() {
-                let filtered = productsData.filter(p => !currentFilterBrand || p.brand === currentFilterBrand);
-                if (popularProducts.length) {
+                let filtered = productsData.filter(p => !currentBrandFilter || p.brand === currentBrandFilter);
+                if (popularData.length) {
                     const popularIds = getPopularProductIds();
-                    filtered = filtered.filter(p => popularIds.includes(p.id))
-                                       .sort((a, b) => popularIds.indexOf(a.id) - popularIds.indexOf(b.id));
+                    filtered = filtered.filter(p => popularIds.includes(p.id));
+                    filtered.sort((a,b) => popularIds.indexOf(a.id) - popularIds.indexOf(b.id));
                 }
                 return filtered;
             }
 
             function renderProducts() {
-                if (!productsContainer) return;
+                const container = document.getElementById('productsContainer');
+                const resultSpan = document.getElementById('resultCount');
+                if (!container) return;
                 const filtered = getFilteredProducts();
                 if (!filtered.length) {
-                    productsContainer.innerHTML = `<div class="no-products" style="grid-column:1/-1; padding:20px;">😕 Товары не найдены</div>`;
-                    if (resultCountSpan) resultCountSpan.textContent = '';
+                    container.innerHTML = '<div class="no-products">😕 Товары не найдены</div>';
+                    if (resultSpan) resultSpan.textContent = '';
                     return;
                 }
-
                 let html = '';
-                filtered.forEach(prod => {
-                    const bg = prod.imgFile ? `background-image:url('imges/${prod.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
-                    html += `<div class="product-card" data-id="${prod.id}" data-desc="${prod.desc || ''}">
-                        <div class="product-image" style="${bg}">${!prod.imgFile ? prod.imgLabel || prod.brand : ''}</div>
-                        <div class="product-title">${prod.name}</div>
-                        <div class="product-brand">${prod.brand || ''}</div>
-                        <div class="product-price">${prod.priceStr || (prod.price ? prod.price.toLocaleString('ru-RU') + ' ₽' : '')}</div>
-                        <div class="card-actions">
-                            <button class="card-btn" data-action="info">ℹ️</button>
-                            <button class="card-btn" data-action="compare">⚖️</button>
-                            <button class="card-btn" data-action="favorite">❤️</button>
-                            <button class="card-btn" data-action="cart">🛒</button>
+                filtered.forEach(p => {
+                    const bgStyle = p.imgFile ? `background-image:url('imges/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
+                    html += `
+                        <div class="product-card" data-id="${p.id}">
+                            <div class="product-image" style="${bgStyle}">${!p.imgFile ? (p.imgLabel || p.brand || '🔫') : ''}</div>
+                            <div class="product-title">${escapeHtml(p.name)}</div>
+                            <div class="product-brand">${escapeHtml(p.brand || '')}</div>
+                            <div class="product-price">${p.priceStr || (p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : '')}</div>
+                            <div class="card-actions">
+                                <button class="card-btn" data-action="info">ℹ️</button>
+                                <button class="card-btn" data-action="compare">⚖️</button>
+                                <button class="card-btn" data-action="favorite">❤️</button>
+                                <button class="card-btn" data-action="cart">🛒</button>
+                            </div>
                         </div>
-                    </div>`;
+                    `;
                 });
-                productsContainer.innerHTML = html;
-                if (resultCountSpan) resultCountSpan.textContent = `найдено: ${filtered.length}`;
+                container.innerHTML = html;
+                if (resultSpan) resultSpan.textContent = `найдено: ${filtered.length}`;
             }
 
-            function refreshIndex() {
-                renderBrandList();
-                renderProducts();
-            }
-
-            if (brandListEl) {
-                brandListEl.addEventListener('click', e => {
-                    const item = e.target.closest('.brand-item');
-                    if (!item) return;
-                    const brand = item.dataset.brand;
-                    currentFilterBrand = currentFilterBrand === brand ? null : brand;
-                    refreshIndex();
-                    showToast(currentFilterBrand ? `🎯 Бренд: ${currentFilterBrand}` : 'Все бренды');
+            function renderBrandList() {
+                const brandContainer = document.getElementById('brandListContainer');
+                if (!brandContainer) return;
+                brandContainer.innerHTML = allBrands.map(b => `<div class="brand-item ${currentBrandFilter === b ? 'active' : ''}" data-brand="${b}">${escapeHtml(b)}</div>`).join('');
+                brandContainer.querySelectorAll('.brand-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        currentBrandFilter = currentBrandFilter === el.dataset.brand ? null : el.dataset.brand;
+                        renderBrandList();
+                        renderProducts();
+                        showToast(currentBrandFilter ? `🎯 Бренд: ${currentBrandFilter}` : 'Все бренды');
+                    });
                 });
             }
 
-            if (resetBrandSpan) {
-                resetBrandSpan.addEventListener('click', () => {
-                    currentFilterBrand = null;
-                    refreshIndex();
-                    showToast('Фильтр сброшен');
-                });
-            }
+            function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
 
-            if (showAllBtn) {
-                showAllBtn.addEventListener('click', () => {
-                    currentFilterBrand = null;
-                    if (searchInput) searchInput.value = '';
-                    refreshIndex();
-                    showToast('Все товары');
-                });
-            }
+            // ---------- ГЛОБАЛЬНЫЙ ОБРАБОТЧИК КЛИКОВ (ДЛЯ КНОПОК КАРТОЧЕК) ----------
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.card-btn');
+                if (!btn) return;
+                const card = btn.closest('.product-card');
+                if (!card) return;
+                const id = parseInt(card.dataset.id);
+                const product = productsData.find(p => p.id === id);
+                if (!product) return;
+                const action = btn.dataset.action;
+                if (action === 'info') {
+                    showToast(`📋 ${product.name}: ${product.desc || 'Без описания'}`, 4000);
+                } else if (action === 'compare') {
+                    addToCompare(id, product.name);
+                } else if (action === 'favorite') {
+                    addToFavorite(id, product.name);
+                } else if (action === 'cart') {
+                    addToCart(id, product.name);
+                }
+            });
 
-            // ---------- ИНИЦИАЛИЗАЦИЯ ----------
-            function init() {
-                cleanupStorage();
-                syncCountersFromStorage();
-                renderCarousel();
-                renderNews();
-                renderBrandList();
-                renderProducts();
-            }
+            // ---------- КНОПКИ УПРАВЛЕНИЯ ----------
+            document.getElementById('resetBrandFilter')?.addEventListener('click', () => { currentBrandFilter = null; renderBrandList(); renderProducts(); showToast('Фильтр сброшен'); });
+            document.getElementById('showAllBtn')?.addEventListener('click', () => { currentBrandFilter = null; renderBrandList(); renderProducts(); showToast('Все товары'); });
+            document.getElementById('clearCountersBtn')?.addEventListener('click', () => {
+                setStorageArray(STORAGE_KEYS.COMPARE, []);
+                setStorageArray(STORAGE_KEYS.FAVORITE, []);
+                setStorageArray(STORAGE_KEYS.CART, []);
+                showToast('🧹 Счетчики сброшены');
+            });
+            document.getElementById('logoBtn')?.addEventListener('click', () => window.location.href = 'index.html');
 
-            init();
+            // ---------- ПОИСК ----------
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            function performSearch() {
+                const query = searchInput.value.trim();
+                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
+            }
+            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+            // ---------- ЗАПУСК ----------
+            syncCounters();
+            renderCarousel();
+            renderNews();
+            renderBrandList();
+            renderProducts();
         })();
     </script>
 </body>

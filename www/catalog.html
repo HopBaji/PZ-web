@@ -6,9 +6,25 @@
     <title>Каталог · Охота и Рыбалка</title>
     <link rel="icon" type="image/png" href="imges/title.png">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .price-range { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .price-range input { width: 90px; padding: 8px; border: 1px solid #ccc; border-radius: 8px; }
+        .apply-price { background: #c49a3f; border: none; color: #1e2a2e; font-weight: bold; padding: 8px 12px; border-radius: 40px; cursor: pointer; margin-top: 8px; }
+        .filter-group { margin-bottom: 24px; }
+        .filter-group h4 { font-size: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .filter-reset { font-size: 12px; color: #c49a3f; cursor: pointer; }
+        .filter-checkbox { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 8px; }
+        .filter-checkbox input { accent-color: #c49a3f; }
+        .reset-all-filters { background: #c49a3f; border: none; color: #1e2a2e; font-weight: bold; padding: 10px; border-radius: 40px; width: 100%; margin-top: 16px; cursor: pointer; }
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 30px; }
+        .page-btn { min-width: 40px; height: 40px; border: 1px solid #ddd; background: white; border-radius: 40px; cursor: pointer; }
+        .page-btn.active { background: #c49a3f; border-color: #c49a3f; color: #1e2a2e; }
+        .no-products { text-align: center; padding: 40px; background: #fffaf3; border-radius: 16px; }
+        .catalog-section { background: #fffaf3; border-radius: 20px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    </style>
 </head>
 <body class="page-catalog">
-    <div id="toast" class="toast-message">Товар добавлен</div>
+    <div id="toast" class="toast-message"></div>
 
     <header class="header">
         <div class="header-top">
@@ -25,7 +41,7 @@
                 <button id="searchBtn">Найти</button>
             </div>
             <div class="user-actions">
-                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="compare.html" class="action-btn" id="compareBtn">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
                 <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
                 <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
             </div>
@@ -33,31 +49,28 @@
     </header>
 
     <main class="main-content">
-        <!-- Сайдбар с фильтрами -->
         <aside class="filters-sidebar">
             <h3>Фильтры</h3>
             <div class="filter-group">
                 <h4>Бренды <span class="filter-reset" id="resetBrands">сбросить</span></h4>
-                <div class="brand-list" id="brandFilters"></div>
+                <div id="brandFilters"></div>
             </div>
             <div class="filter-group">
                 <h4>Категории <span class="filter-reset" id="resetCategories">сбросить</span></h4>
-                <div class="category-list" id="categoryFilters"></div>
+                <div id="categoryFilters"></div>
             </div>
             <div class="filter-group">
                 <h4>Цена, ₽</h4>
                 <div class="price-range">
                     <input type="number" id="priceMin" placeholder="от" value="0">
                     <span>—</span>
-                    <input type="number" id="priceMax" placeholder="до" value="50000">
+                    <input type="number" id="priceMax" placeholder="до" value="100000">
                 </div>
                 <button class="apply-price" id="applyPrice">Применить</button>
             </div>
             <button class="reset-all-filters" id="resetAllFilters">Сбросить все фильтры</button>
-            <p style="font-size:12px; color:#888; margin-top:20px;">⭐ Выберите параметры</p>
         </aside>
 
-        <!-- Каталог товаров -->
         <section class="catalog-section">
             <div class="catalog-header">
                 <h1>Каталог снаряжения</h1>
@@ -74,48 +87,272 @@
                     </div>
                 </div>
             </div>
-
             <div id="productsContainer" class="product-grid"></div>
-
-            <!-- Пагинация -->
             <div class="pagination" id="pagination"></div>
-            <div style="text-align:right; margin-top:10px; color:#666;" id="resultInfo"></div>
+            <div id="resultInfo" style="text-align:right; margin-top:10px; color:#666;"></div>
         </section>
     </main>
 
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section">
-    <h4>О магазине</h4>
-    <ul>
-        <li><a href="about.html">О компании</a></li>
-        <li><a href="news.html">Новости</a></li>
-        <li><a href="vacancies.html">Вакансии</a></li>
-        <li><a href="privacy.html">Политика конфиденциальности</a></li>
-    </ul>
-</div>
-<div class="footer-section">
-    <h4>Покупателям</h4>
-    <ul>
-        <li><a href="howtoorder.html">Как заказать</a></li>
-        <li><a href="payment.html">Оплата</a></li>
-        <li><a href="delivery.html">Доставка</a></li>
-        <li><a href="returns.html">Возврат</a></li>
-    </ul>
-</div>
-            <div class="footer-section">
-                <h4>Контакты</h4>
-                <ul>
-                    <li>📞 8 (800) 123-45-67</li>
-                    <li>✉️ info@huntfish.ru</li>
-                    <li>📍 г. Москва, ул. Охотничья, 15</li>
-                </ul>
-            </div>
+            <div class="footer-section"><h4>О магазине</h4><ul><li><a href="about.html">О компании</a></li><li><a href="news.html">Новости</a></li><li><a href="vacancies.html">Вакансии</a></li><li><a href="privacy.html">Политика конфиденциальности</a></li></ul></div>
+            <div class="footer-section"><h4>Покупателям</h4><ul><li><a href="howtoorder.html">Как заказать</a></li><li><a href="payment.html">Оплата</a></li><li><a href="delivery.html">Доставка</a></li><li><a href="returns.html">Возврат</a></li></ul></div>
+            <div class="footer-section"><h4>Контакты</h4><ul><li>📞 8 (800) 123-45-67</li><li>✉️ info@huntfish.ru</li><li>📍 г. Москва, ул. Охотничья, 15</li></ul></div>
         </div>
         <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
-    
+
     <script src="js/content.js"></script>
-    <script src="js/main.js"></script>
+    <script>
+        (function(){
+            "use strict";
+
+            // ----- ДАННЫЕ ТОЛЬКО ИЗ content.js (window.shopContent) -----
+            let productsData = [];
+            if (window.shopContent && window.shopContent.weaponsCatalog) {
+                productsData = window.shopContent.weaponsCatalog;
+            }
+            window.productsData = productsData;
+
+            // ----- КОРЗИНА/ИЗБРАННОЕ/СРАВНЕНИЕ (localStorage) -----
+            const STORAGE_KEYS = {
+                COMPARE: 'huntfish_compare',
+                FAVORITE: 'huntfish_favorite',
+                CART: 'huntfish_cart'
+            };
+            function getStorageArray(key) {
+                try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
+            }
+            function setStorageArray(key, arr) {
+                localStorage.setItem(key, JSON.stringify(arr));
+                syncCounters();
+            }
+            function syncCounters() {
+                document.getElementById('compareCount').textContent = getStorageArray(STORAGE_KEYS.COMPARE).length;
+                document.getElementById('favoriteCount').textContent = getStorageArray(STORAGE_KEYS.FAVORITE).length;
+                document.getElementById('cartCount').textContent = getStorageArray(STORAGE_KEYS.CART).length;
+            }
+            function showToast(msg, duration=2500) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), duration);
+            }
+            function addToCompare(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.COMPARE);
+                if (arr.includes(id)) { showToast(`ℹ️ ${name} уже в сравнении`); return false; }
+                if (arr.length >= 4) { showToast(`⚠️ Можно сравнить не более 4 товаров`); return false; }
+                arr.push(id); setStorageArray(STORAGE_KEYS.COMPARE, arr);
+                showToast(`⚖️ ${name} добавлен в сравнение`);
+                return true;
+            }
+            function addToFavorite(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.FAVORITE);
+                if (arr.includes(id)) { showToast(`ℹ️ ${name} уже в избранном`); return false; }
+                arr.push(id); setStorageArray(STORAGE_KEYS.FAVORITE, arr);
+                showToast(`❤️ ${name} добавлен в избранное`);
+                return true;
+            }
+            function addToCart(id, name) {
+                let arr = getStorageArray(STORAGE_KEYS.CART);
+                arr.push(id); setStorageArray(STORAGE_KEYS.CART, arr);
+                showToast(`🛒 ${name} добавлен в корзину`);
+            }
+
+            // ----- ФИЛЬТРЫ, СОРТИРОВКА, ПАГИНАЦИЯ -----
+            let currentFilters = {
+                brands: new Set(),
+                categories: new Set(),
+                priceMin: 0,
+                priceMax: 100000
+            };
+            let currentSort = 'default';
+            let currentPage = 1;
+            let itemsPerPage = 12;
+            let filteredProducts = [];
+
+            const allBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))];
+            const allCategories = [...new Set(productsData.map(p => p.category).filter(Boolean))];
+
+            function renderFilterOptions() {
+                const brandDiv = document.getElementById('brandFilters');
+                const catDiv = document.getElementById('categoryFilters');
+                if (brandDiv) {
+                    brandDiv.innerHTML = allBrands.map(b => `
+                        <label class="filter-checkbox">
+                            <input type="checkbox" value="${b}" ${currentFilters.brands.has(b) ? 'checked' : ''}> ${b}
+                        </label>
+                    `).join('');
+                }
+                if (catDiv) {
+                    catDiv.innerHTML = allCategories.map(c => `
+                        <label class="filter-checkbox">
+                            <input type="checkbox" value="${c}" ${currentFilters.categories.has(c) ? 'checked' : ''}> ${c}
+                        </label>
+                    `).join('');
+                }
+                document.querySelectorAll('#brandFilters input').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target.checked) currentFilters.brands.add(e.target.value);
+                        else currentFilters.brands.delete(e.target.value);
+                        applyFiltersAndRender();
+                    });
+                });
+                document.querySelectorAll('#categoryFilters input').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target.checked) currentFilters.categories.add(e.target.value);
+                        else currentFilters.categories.delete(e.target.value);
+                        applyFiltersAndRender();
+                    });
+                });
+            }
+
+            function applyFiltersAndRender() {
+                let filtered = productsData.filter(p => {
+                    if (currentFilters.brands.size && !currentFilters.brands.has(p.brand)) return false;
+                    if (currentFilters.categories.size && !currentFilters.categories.has(p.category)) return false;
+                    const price = p.price || 0;
+                    if (price < currentFilters.priceMin || price > currentFilters.priceMax) return false;
+                    return true;
+                });
+                if (currentSort === 'priceAsc') filtered.sort((a,b) => (a.price||0) - (b.price||0));
+                else if (currentSort === 'priceDesc') filtered.sort((a,b) => (b.price||0) - (a.price||0));
+                else if (currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+                filteredProducts = filtered;
+                currentPage = 1;
+                renderProducts();
+            }
+
+            function renderProducts() {
+                const container = document.getElementById('productsContainer');
+                const paginationDiv = document.getElementById('pagination');
+                const resultInfo = document.getElementById('resultInfo');
+                const total = filteredProducts.length;
+                const totalPages = Math.ceil(total / itemsPerPage);
+                const start = (currentPage-1)*itemsPerPage;
+                const pageProducts = filteredProducts.slice(start, start+itemsPerPage);
+
+                if (!pageProducts.length) {
+                    container.innerHTML = '<div class="no-products">😕 Товары не найдены</div>';
+                    paginationDiv.innerHTML = '';
+                    resultInfo.textContent = '';
+                    return;
+                }
+
+                let html = '';
+                pageProducts.forEach(prod => {
+                    const bgStyle = prod.imgFile ? `background-image:url('imges/${prod.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
+                    html += `
+                        <div class="product-card" data-id="${prod.id}">
+                            <div class="product-image" style="${bgStyle}">${!prod.imgFile ? (prod.imgLabel || prod.brand || '🔫') : ''}</div>
+                            <div class="product-title">${escapeHtml(prod.name)}</div>
+                            <div class="product-brand">${escapeHtml(prod.brand || '')}</div>
+                            <div class="product-price">${prod.priceStr || (prod.price ? prod.price.toLocaleString('ru-RU') + ' ₽' : '')}</div>
+                            <div class="card-actions">
+                                <button class="card-btn" data-action="info">ℹ️</button>
+                                <button class="card-btn" data-action="compare">⚖️</button>
+                                <button class="card-btn" data-action="favorite">❤️</button>
+                                <button class="card-btn" data-action="cart">🛒</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                let pagesHtml = '';
+                for (let i=1; i<=totalPages; i++) {
+                    pagesHtml += `<button class="page-btn ${i===currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+                }
+                paginationDiv.innerHTML = pagesHtml;
+                document.querySelectorAll('.page-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        currentPage = parseInt(btn.dataset.page);
+                        renderProducts();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                });
+                resultInfo.textContent = `Показано ${pageProducts.length} из ${total} товаров`;
+            }
+
+            function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+
+            // Обработчики кнопок на карточках
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.card-btn');
+                if (!btn) return;
+                const card = btn.closest('.product-card');
+                if (!card) return;
+                const id = parseInt(card.dataset.id);
+                const product = productsData.find(p => p.id === id);
+                if (!product) return;
+                const action = btn.dataset.action;
+                if (action === 'info') showToast(`📋 ${product.name}: ${product.desc || 'Без описания'}`, 4000);
+                else if (action === 'compare') addToCompare(id, product.name);
+                else if (action === 'favorite') addToFavorite(id, product.name);
+                else if (action === 'cart') addToCart(id, product.name);
+            });
+
+            // Сброс фильтров
+            document.getElementById('resetBrands').addEventListener('click', () => { currentFilters.brands.clear(); renderFilterOptions(); applyFiltersAndRender(); });
+            document.getElementById('resetCategories').addEventListener('click', () => { currentFilters.categories.clear(); renderFilterOptions(); applyFiltersAndRender(); });
+            document.getElementById('resetAllFilters').addEventListener('click', () => {
+                currentFilters.brands.clear();
+                currentFilters.categories.clear();
+                document.getElementById('priceMin').value = 0;
+                document.getElementById('priceMax').value = 100000;
+                currentFilters.priceMin = 0;
+                currentFilters.priceMax = 100000;
+                renderFilterOptions();
+                applyFiltersAndRender();
+                showToast('Все фильтры сброшены');
+            });
+            document.getElementById('applyPrice').addEventListener('click', () => {
+                let min = parseInt(document.getElementById('priceMin').value) || 0;
+                let max = parseInt(document.getElementById('priceMax').value) || 100000;
+                if (min > max) [min, max] = [max, min];
+                currentFilters.priceMin = min;
+                currentFilters.priceMax = max;
+                applyFiltersAndRender();
+            });
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                applyFiltersAndRender();
+            });
+
+            // Поиск из шапки
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            if (searchQuery) {
+                document.getElementById('searchInput').value = searchQuery;
+                const lowerQuery = searchQuery.toLowerCase();
+                const originalFilter = applyFiltersAndRender;
+                window.applyFiltersAndRender = function() {
+                    let filtered = productsData.filter(p => p.name.toLowerCase().includes(lowerQuery));
+                    filteredProducts = filtered;
+                    currentPage = 1;
+                    renderProducts();
+                };
+                window.applyFiltersAndRender();
+            } else {
+                applyFiltersAndRender();
+            }
+
+            // Обработчики поиска
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (query) window.location.href = `catalog.html?search=${encodeURIComponent(query)}`;
+                else window.location.href = 'catalog.html';
+            }
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+            document.getElementById('logoBtn').addEventListener('click', () => window.location.href = 'index.html');
+
+            syncCounters();
+            renderFilterOptions();
+        })();
+    </script>
 </body>
 </html>

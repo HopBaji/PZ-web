@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="imges/title.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Дополнительные стили для страницы избранного (можно добавить в общий style.css) */
         .favorites-hero {
             background: linear-gradient(rgba(30, 42, 46, 0.8), rgba(30, 42, 46, 0.8)), url('imges/favorites-bg.jpg') center/cover no-repeat;
             background-color: #2c3e50;
@@ -17,10 +16,7 @@
             margin-bottom: 30px;
             text-align: center;
         }
-        .favorites-hero h1 {
-            font-size: 38px;
-            margin-bottom: 10px;
-        }
+        .favorites-hero h1 { font-size: 38px; margin-bottom: 10px; }
         .favorites-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -31,11 +27,6 @@
             padding: 50px 20px;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .empty-favorites p {
-            font-size: 18px;
-            margin-bottom: 20px;
         }
         .empty-favorites a {
             display: inline-block;
@@ -46,18 +37,17 @@
             text-decoration: none;
             font-weight: bold;
         }
-        .remove-from-favorites {
+        .remove-fav {
             background: none;
             border: 1px solid #ccc;
+            border-radius: 30px;
             padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 8px;
-            transition: all 0.2s;
+            margin-top: 10px;
             width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .remove-from-favorites:hover {
+        .remove-fav:hover {
             background: #e74c3c;
             border-color: #e74c3c;
             color: white;
@@ -89,37 +79,34 @@
         </div>
     </header>
 
-    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1400px; margin: 0 auto; width: 100%;">
+    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1200px; margin: 0 auto; width: 100%;">
         <section class="favorites-hero">
             <h1>Избранные товары</h1>
             <p>Здесь хранятся товары, которые вам понравились</p>
         </section>
-
-        <div id="favoritesContent">
-            <!-- Заполняется через JS -->
-        </div>
+        <div id="favoritesContent"></div>
     </main>
 
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-    <h4>О магазине</h4>
-    <ul>
-        <li><a href="about.html">О компании</a></li>
-        <li><a href="news.html">Новости</a></li>
-        <li><a href="vacancies.html">Вакансии</a></li>
-        <li><a href="privacy.html">Политика конфиденциальности</a></li>
-    </ul>
-</div>
-<div class="footer-section">
-    <h4>Покупателям</h4>
-    <ul>
-        <li><a href="howtoorder.html">Как заказать</a></li>
-        <li><a href="payment.html">Оплата</a></li>
-        <li><a href="delivery.html">Доставка</a></li>
-        <li><a href="returns.html">Возврат</a></li>
-    </ul>
-</div>
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="about.html">О компании</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="vacancies.html">Вакансии</a></li>
+                    <li><a href="privacy.html">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="howtoorder.html">Как заказать</a></li>
+                    <li><a href="payment.html">Оплата</a></li>
+                    <li><a href="delivery.html">Доставка</a></li>
+                    <li><a href="returns.html">Возврат</a></li>
+                </ul>
+            </div>
             <div class="footer-section">
                 <h4>Контакты</h4>
                 <ul>
@@ -132,6 +119,89 @@
         <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="js/content.js"></script>
+    <script>
+        (function() {
+            let productsData = [];
+            if (window.shopContent?.weaponsCatalog) productsData = window.shopContent.weaponsCatalog;
+            else if (localStorage.getItem('weapons_catalog')) productsData = JSON.parse(localStorage.getItem('weapons_catalog'));
+
+            const STORAGE_KEYS = { FAVORITE: 'huntfish_favorite', COMPARE: 'huntfish_compare', CART: 'huntfish_cart' };
+
+            function getStorageArray(key) {
+                try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
+            }
+            function setStorageArray(key, arr) {
+                localStorage.setItem(key, JSON.stringify(arr));
+                syncCounters();
+            }
+            function syncCounters() {
+                const compareSpan = document.getElementById('compareCount');
+                const favoriteSpan = document.getElementById('favoriteCount');
+                const cartSpan = document.getElementById('cartCount');
+                if (compareSpan) compareSpan.textContent = getStorageArray(STORAGE_KEYS.COMPARE).length;
+                if (favoriteSpan) favoriteSpan.textContent = getStorageArray(STORAGE_KEYS.FAVORITE).length;
+                if (cartSpan) cartSpan.textContent = getStorageArray(STORAGE_KEYS.CART).length;
+            }
+            function showToast(msg, duration=2500) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), duration);
+            }
+            function removeFromFav(id) {
+                let fav = getStorageArray(STORAGE_KEYS.FAVORITE);
+                fav = fav.filter(item => item !== id);
+                setStorageArray(STORAGE_KEYS.FAVORITE, fav);
+                renderFavorites();
+                showToast('Удалено из избранного');
+            }
+            function renderFavorites() {
+                const container = document.getElementById('favoritesContent');
+                const ids = getStorageArray(STORAGE_KEYS.FAVORITE);
+                const items = productsData.filter(p => ids.includes(p.id));
+                if (!items.length) {
+                    container.innerHTML = '<div class="empty-favorites"><p>😕 Избранное пусто</p><a href="catalog.html">Перейти в каталог</a></div>';
+                    return;
+                }
+                let html = '<div class="favorites-grid">';
+                items.forEach(p => {
+                    const bgStyle = p.imgFile ? `background-image:url('imges/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
+                    const priceDisplay = p.priceStr || (p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : '');
+                    html += `
+                        <div class="product-card" data-id="${p.id}">
+                            <div class="product-image" style="${bgStyle}">${!p.imgFile ? (p.imgLabel || p.brand || '🔫') : ''}</div>
+                            <div class="product-title">${escapeHtml(p.name)}</div>
+                            <div class="product-brand">${escapeHtml(p.brand || '')}</div>
+                            <div class="product-price">${escapeHtml(priceDisplay)}</div>
+                            <button class="remove-fav" data-id="${p.id}">❌ Удалить</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+                document.querySelectorAll('.remove-fav').forEach(btn => {
+                    btn.addEventListener('click', (e) => removeFromFav(parseInt(btn.dataset.id)));
+                });
+            }
+            function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
+
+            // Поиск
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            function performSearch() {
+                const query = searchInput.value.trim();
+                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
+            }
+            if (searchBtn) searchBtn.addEventListener('click', performSearch);
+            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+            document.getElementById('logoBtn').addEventListener('click', () => window.location.href = 'index.html');
+
+            syncCounters();
+            renderFavorites();
+        })();
+    </script>
 </body>
 </html>
