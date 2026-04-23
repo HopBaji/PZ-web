@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ‑панель | Управление контентом</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Inter', sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+            padding: 24px 20px;
+            color: #0f172a;
+        }
+        .container { max-width: 1440px; margin: 0 auto; }
+        .header-bar { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 28px; gap: 16px; }
+        h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #1e293b, #2d3a4e); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 10px; }
+        h1 small { font-size: 14px; font-weight: 400; background: none; color: #5b6e8c; }
+        .badge-count { background: #e2e8f0; border-radius: 40px; padding: 4px 12px; font-size: 14px; font-weight: 500; color: #1e293b; }
+        .tabs-nav { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: none; padding: 12px 24px; font-size: 15px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; border-radius: 20px 20px 0 0; position: relative; top: 2px; }
+        .tab-btn:hover { color: #0f172a; background: rgba(255,255,255,0.5); }
+        .tab-btn.active { color: #0f172a; background: white; border: 2px solid #e2e8f0; border-bottom-color: white; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .panel { background: #ffffff; border-radius: 28px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02); padding: 28px 32px; margin-bottom: 32px; border: 1px solid #e9eef3; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: #4a5a72; }
+        .form-group label .required-star { color: #ef4444; margin-left: 3px; }
+        .optional-badge { font-size: 10px; font-weight: normal; background: #eef2ff; padding: 2px 6px; border-radius: 20px; margin-left: 8px; color: #2563eb; }
+        .form-group input, .form-group textarea, .form-group select { padding: 11px 14px; border: 1.5px solid #e2e8f0; border-radius: 16px; font-size: 14px; transition: 0.2s; background: #fefefe; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #3b82f6; outline: none; background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12); }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; align-items: center; }
+        .btn { background: white; border: 1.5px solid #cbd5e1; padding: 10px 24px; border-radius: 44px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; color: #1e293b; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: #0f172a; border-color: #0f172a; color: white; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2); }
+        .btn-primary:hover { background: #2d3a5e; border-color: #2d3a5e; transform: translateY(-1px); }
+        .btn-outline { background: transparent; border-color: #cbd5e1; }
+        .btn-outline:hover { background: #f8fafc; border-color: #94a3b8; }
+        .btn-success { background: #10b981; border-color: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; border-color: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 6px 14px; font-size: 12px; gap: 6px; }
+        .table-header-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 18px; gap: 12px; }
+        .table-wrapper { overflow-x: auto; border-radius: 24px; background: white; border: 1px solid #eef2f8; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { text-align: left; padding: 18px 16px; background: #fafcff; font-weight: 700; font-size: 13px; color: #334155; border-bottom: 1px solid #e4e9f0; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f0f2f7; vertical-align: middle; }
+        tr:hover td { background-color: #fafdff; }
+        .weapon-img-preview { width: 52px; height: 52px; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 500; color: #2c3e66; border: 1px solid #e2edf7; }
+        .price-tag { font-weight: 700; color: #0f172a; background: #f1f5f9; padding: 4px 10px; border-radius: 30px; display: inline-block; font-size: 14px; }
+        .row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .empty-message { text-align: center; padding: 56px 20px; color: #6c7a91; font-style: italic; font-size: 15px; }
+        .stat-number { font-weight: 700; background: #e6edf6; border-radius: 24px; padding: 2px 10px; font-size: 13px; margin-left: 10px; }
+        .toast-message { position: fixed; bottom: 24px; right: 24px; background: #1f2a3e; color: white; padding: 12px 20px; border-radius: 60px; font-size: 13px; font-weight: 500; z-index: 1000; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: opacity 0.2s; pointer-events: none; }
+        @media (max-width: 680px) { body { padding: 16px; } .panel { padding: 20px; } .btn { padding: 8px 18px; } }
+        .file-import { position: relative; overflow: hidden; display: inline-block; }
+        .file-import input { position: absolute; font-size: 100px; right: 0; top: 0; opacity: 0; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="container" id="adminContainer" style="display:none;">
+    <div class="header-bar">
+        <h1>Управление контентом <small>администратор</small></h1>
+        <div class="badge-count">📊 панель v2.2 (с редактированием и импортом)</div>
+    </div>
+
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="catalog">📦 Каталог оружия</button>
+        <button class="tab-btn" data-tab="promo">🎁 Акции</button>
+        <button class="tab-btn" data-tab="news">📰 Новости</button>
+        <button class="tab-btn" data-tab="carousel">🎠 Карусель</button>
+        <button class="tab-btn" data-tab="popular">⭐ Популярные товары</button>
+    </div>
+
+    <!-- Вкладка Каталог (без изменений, работает) -->
+    <div class="tab-pane active" id="pane-catalog">
+        <div class="panel">
+            <h2 style="margin-bottom: 20px; font-weight: 600; font-size: 20px;" id="catalog-form-title">➕ Добавить новое оружие</h2>
+            <form id="weapon-form" autocomplete="off">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID <span class="required-star">*</span></label><input type="number" id="weapon-id" placeholder="Уникальный номер" required></div>
+                    <div class="form-group"><label>Название <span class="required-star">*</span></label><input type="text" id="weapon-name" placeholder="Benelli M4" required></div>
+                    <div class="form-group"><label>Бренд</label><input type="text" id="weapon-brand" placeholder="Benelli"></div>
+                    <div class="form-group"><label>Категория</label><input type="text" id="weapon-category" placeholder="Оружие"></div>
+                    <div class="form-group"><label>Цена (₽)</label><input type="number" id="weapon-price" placeholder="27500"></div>
+                    <div class="form-group"><label>Цена строкой</label><input type="text" id="weapon-priceStr" placeholder="27 500 ₽"></div>
+                    <div class="form-group"><label>Метка для иконки</label><input type="text" id="weapon-imgLabel" placeholder="M4"></div>
+                    <div class="form-group"><label>Имя файла</label><input type="text" id="weapon-imgFile" placeholder="Benelli_M4.webp"></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Описание</label><textarea id="weapon-desc" placeholder="Характеристики..."></textarea></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="catalog-submit-btn">➕ Добавить</button>
+                    <button type="button" class="btn btn-outline" id="catalog-clear-form">🧹 Очистить</button>
+                    <button type="button" class="btn btn-outline" id="catalog-cancel-edit" style="display:none;">✖ Отменить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions">
+            <h2>📋 Каталог <span class="stat-number" id="catalog-count">0</span></h2>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-success btn-sm" id="export-mainjs">📎 Экспорт только каталога (JS)</button>
+                <button class="btn btn-primary btn-sm" id="export-all-content">📦 Экспорт всего контента (JS)</button>
+                <button class="btn btn-outline btn-sm" id="catalog-reset-default">⟳ Сброс до заводского</button>
+                <!-- Новые кнопки JSON -->
+                <button class="btn btn-success btn-sm" id="export-json">💾 Экспорт JSON</button>
+                <label class="btn btn-outline btn-sm file-import">📂 Импорт JSON <input type="file" id="import-json-file" accept=".json"></label>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table id="catalog-table">
+                <thead><tr><th>ID</th><th>Иконка</th><th>Название</th><th>Бренд</th><th>Цена</th><th>Описание</th><th>Действия</th></tr></thead>
+                <tbody id="catalog-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Вкладка Акции (с редактированием) -->
+    <div class="tab-pane" id="pane-promo">
+        <div class="panel">
+            <h2 style="margin-bottom:20px;">🎁 Управление акциями</h2>
+            <form id="promo-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID акции</label><input type="text" id="promo-id" placeholder="promo1" required></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="promo-title" placeholder="Скидка 30%"></div>
+                    <div class="form-group"><label>Описание</label><textarea id="promo-desc" placeholder="Условия..."></textarea></div>
+                    <div class="form-group"><label>Цвет фона</label><input type="color" id="promo-bg" value="#c49a3f"></div>
+                    <div class="form-group"><label>Текст кнопки</label><input type="text" id="promo-btn-text" value="Подробнее"></div>
+                    <div class="form-group"><label>Ссылка</label><input type="text" id="promo-link" value="#"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="promo-submit">➕ Добавить</button>
+                    <button type="button" class="btn btn-outline" id="promo-cancel-edit" style="display:none;">✖ Отменить</button>
+                    <button type="button" class="btn btn-outline" id="promo-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>📢 Список акций</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead><tbody id="promo-tbody"></tbody></table>
+        </div>
+    </div>
+
+    <!-- Вкладка Новости (с редактированием) -->
+    <div class="tab-pane" id="pane-news">
+        <div class="panel">
+            <h2>📰 Новости</h2>
+            <form id="news-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID</label><input type="text" id="news-id" placeholder="news1" required></div>
+                    <div class="form-group"><label>Дата</label><input type="date" id="news-date"></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="news-title"></div>
+                    <div class="form-group" style="grid-column:span 2;"><label>Текст</label><textarea id="news-text"></textarea></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="news-submit">➕ Добавить</button>
+                    <button type="button" class="btn btn-outline" id="news-cancel-edit" style="display:none;">✖ Отменить</button>
+                    <button type="button" class="btn btn-outline" id="news-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>📋 Лента новостей</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Дата</th><th>Заголовок</th><th>Текст</th><th>Действия</th></tr></thead><tbody id="news-tbody"></tbody></table>
+        </div>
+    </div>
+
+    <!-- Вкладка Карусель (с редактированием) -->
+    <div class="tab-pane" id="pane-carousel">
+        <div class="panel">
+            <h2>🎠 Слайды карусели</h2>
+            <form id="carousel-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID слайда</label><input type="text" id="slide-id" placeholder="slide1" required></div>
+                    <div class="form-group"><label>Заголовок</label><input type="text" id="slide-title" value="Новое поступление"></div>
+                    <div class="form-group"><label>Подзаголовок</label><input type="text" id="slide-subtitle"></div>
+                    <div class="form-group"><label>Цвет фона</label><input type="color" id="slide-bg" value="#1e2a2e"></div>
+                    <div class="form-group"><label>Текст кнопки</label><input type="text" id="slide-btn-text" value="Смотреть"></div>
+                    <div class="form-group"><label>Ссылка</label><input type="text" id="slide-link" value="catalog.html"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="carousel-submit">➕ Добавить</button>
+                    <button type="button" class="btn btn-outline" id="carousel-cancel-edit" style="display:none;">✖ Отменить</button>
+                    <button type="button" class="btn btn-outline" id="carousel-clear">Очистить</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>🎞️ Слайды</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead><tbody id="carousel-tbody"></tbody></table>
+        </div>
+    </div>
+
+    <!-- Вкладка Популярные -->
+    <div class="tab-pane" id="pane-popular">
+        <div class="panel">
+            <h2>⭐ Популярные товары (ID)</h2>
+            <form id="popular-form">
+                <div class="form-grid">
+                    <div class="form-group"><label>ID товара</label><input type="number" id="popular-product-id" placeholder="1" required></div>
+                    <div class="form-group"><label>Приоритет</label><input type="number" id="popular-priority" value="1"></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">➕ Добавить в популярное</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-header-actions"><h2>🔥 Список популярных</h2></div>
+        <div class="table-wrapper">
+            <table><thead><tr><th>ID товара</th><th>Название</th><th>Приоритет</th><th>Действия</th></tr></thead><tbody id="popular-tbody"></tbody></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== ЗАЩИТА ПАРОЛЕМ ====================
+    (function() {
+        const PASSWORD_HASH = btoa('admin'); // YWRtaW4=
+        let attempts = 0;
+        const maxAttempts = 3;
+
+        if (sessionStorage.getItem('admin_authenticated') === 'true') {
+            document.getElementById('adminContainer').style.display = 'block';
+            return;
+        }
+
+        function showLoginPrompt() {
+            const input = prompt('Введите пароль для доступа к админ-панели:');
+            if (btoa(input) === PASSWORD_HASH) {
+                sessionStorage.setItem('admin_authenticated', 'true');
+                document.getElementById('adminContainer').style.display = 'block';
+            } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    alert('Неверный пароль. Попробуйте ещё раз.');
+                    showLoginPrompt();
+                } else {
+                    alert('Доступ запрещён.');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+        showLoginPrompt();
+    })();
+</script>
+<script src="js/common.js"></script>
+<script>
+    // ==================== ИНИЦИАЛИЗАЦИЯ АДМИНКИ ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('adminContainer');
+        if (container.style.display === 'block') {
+            initAdmin();
+        } else {
+            const observer = new MutationObserver(function(mutations) {
+                if (container.style.display === 'block') {
+                    initAdmin();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(container, { attributes: true, attributeFilter: ['style'] });
+        }
+    });
+
+    function initAdmin() {
+        "use strict";
+        const DEFAULT_WEAPONS = [ /* ... полностью совпадает с оригиналом ... */ 
+            { id: 1, name: "Benelli M3 Super 90", brand: "Benelli", category: "Оружие", price: 27500, priceStr: "27 500 ₽", imgLabel: "Benelli M3", imgFile: "Benelli_M3_View.webp", desc: "Полуавтоматическое/помповое ружьё 12x70" },
+            { id: 2, name: "Mossberg 590A1", brand: "Mossberg", category: "Оружие", price: 18400, priceStr: "18 400 ₽", imgLabel: "M590A1", imgFile: "M590A1_View.webp", desc: "Помповое ружьё 12x70" },
+            { id: 3, name: "Remington Model 870", brand: "Remington", category: "Оружие", price: 16300, priceStr: "16 300 ₽", imgLabel: "M870", imgFile: "M870_View.webp", desc: "Помповое ружьё 12x70" },
+            { id: 4, name: "Винтовка Мосина обр. 1891 г.", brand: "Ижмаш", category: "Оружие", price: 25300, priceStr: "25 300 ₽", imgLabel: "Мосин", imgFile: "Mosin_Infantry_View.webp", desc: "Магазинная винтовка 7.62x54R" },
+            { id: 5, name: "MP-18", brand: "Ижмех", category: "Оружие", price: 12700, priceStr: "12 700 ₽", imgLabel: "МР-18", imgFile: "MP-18_View.webp", desc: "Однозарядное ружьё 7.62x54R" }
+        ];
+
+        let weapons = [], promos = [], news = [], slides = [], popular = [];
+        const KEYS = Shop.STORAGE_KEYS;
+        function showToast(msg) { Shop.showToast(msg); }
+        function escapeHtml(str) { return Shop.escapeHtml(str); }
+
+        function loadAllData() {
+            weapons = Shop.getArray(KEYS.WEAPONS);
+            if (!weapons.length) { weapons = [...DEFAULT_WEAPONS]; Shop.setArray(KEYS.WEAPONS, weapons); }
+            promos = Shop.getArray(KEYS.PROMOS);
+            news = Shop.getArray(KEYS.NEWS);
+            slides = Shop.getArray(KEYS.SLIDES);
+            popular = Shop.getArray(KEYS.POPULAR);
+        }
+        function saveWeapons() { Shop.setArray(KEYS.WEAPONS, weapons); }
+        function savePromos() { Shop.setArray(KEYS.PROMOS, promos); }
+        function saveNews() { Shop.setArray(KEYS.NEWS, news); }
+        function saveSlides() { Shop.setArray(KEYS.SLIDES, slides); }
+        function savePopular() { Shop.setArray(KEYS.POPULAR, popular); }
+
+        // ---------- РЕНДЕР ТАБЛИЦ (добавим обработчики событий редактирования) ----------
+        function renderCatalog() { /* ... без изменений ... */ 
+            const tbody = document.getElementById('catalog-tbody');
+            const countSpan = document.getElementById('catalog-count');
+            if (!weapons.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty-message">Каталог пуст</td></tr>`; countSpan.textContent = '0'; return; }
+            let html = '';
+            weapons.sort((a,b)=>a.id-b.id).forEach(w => {
+                const symbol = w.imgLabel ? w.imgLabel.slice(0,2).toUpperCase() : '🔫';
+                html += `<tr>
+                    <td>${w.id}</td>
+                    <td><div class="weapon-img-preview">${escapeHtml(symbol)}</div></td>
+                    <td><strong>${escapeHtml(w.name)}</strong></td>
+                    <td>${escapeHtml(w.brand||'—')}</td>
+                    <td>${escapeHtml(w.priceStr||w.price)}</td>
+                    <td>${escapeHtml(w.desc?.substring(0,60))}</td>
+                    <td><div class="row-actions"><button class="btn btn-outline btn-sm edit-catalog" data-id="${w.id}">✏️</button><button class="btn btn-danger btn-sm delete-catalog" data-id="${w.id}">🗑️</button></div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            countSpan.textContent = weapons.length;
+        }
+
+        function renderPromos() {
+            const tbody = document.getElementById('promo-tbody');
+            if (!promos.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет акций</td></tr>`; return; }
+            let html = '';
+            promos.forEach(p => {
+                html += `<tr>
+                    <td>${escapeHtml(p.id)}</td>
+                    <td>${escapeHtml(p.title)}</td>
+                    <td><div style="width:30px;height:30px;background:${p.bg};border-radius:8px;"></div></td>
+                    <td>${escapeHtml(p.btnText)}</td>
+                    <td><div class="row-actions"><button class="btn btn-outline btn-sm edit-promo" data-id="${p.id}">✏️</button><button class="btn btn-danger btn-sm delete-promo" data-id="${p.id}">🗑️</button></div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderNews() {
+            const tbody = document.getElementById('news-tbody');
+            if (!news.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет новостей</td></tr>`; return; }
+            let html = '';
+            news.forEach(n => {
+                html += `<tr>
+                    <td>${escapeHtml(n.id)}</td>
+                    <td>${escapeHtml(n.date)}</td>
+                    <td>${escapeHtml(n.title)}</td>
+                    <td>${escapeHtml(n.text?.substring(0,40))}</td>
+                    <td><div class="row-actions"><button class="btn btn-outline btn-sm edit-news" data-id="${n.id}">✏️</button><button class="btn btn-danger btn-sm delete-news" data-id="${n.id}">🗑️</button></div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderCarousel() {
+            const tbody = document.getElementById('carousel-tbody');
+            if (!slides.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Нет слайдов</td></tr>`; return; }
+            let html = '';
+            slides.forEach(s => {
+                html += `<tr>
+                    <td>${escapeHtml(s.id)}</td>
+                    <td>${escapeHtml(s.title)}</td>
+                    <td><div style="width:30px;height:30px;background:${s.bg};border-radius:8px;"></div></td>
+                    <td>${escapeHtml(s.btnText)}</td>
+                    <td><div class="row-actions"><button class="btn btn-outline btn-sm edit-slide" data-id="${s.id}">✏️</button><button class="btn btn-danger btn-sm delete-slide" data-id="${s.id}">🗑️</button></div></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderPopular() {
+            const tbody = document.getElementById('popular-tbody');
+            if (!popular.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty-message">Нет популярных</td></tr>`; return; }
+            let html = '';
+            popular.sort((a,b) => (a.priority||0) - (b.priority||0));
+            popular.forEach(item => {
+                const prod = weapons.find(w => w.id === item.productId);
+                const name = prod ? prod.name : `Товар ${item.productId}`;
+                html += `<tr>
+                    <td>${item.productId}</td>
+                    <td>${escapeHtml(name)}</td>
+                    <td>${item.priority||1}</td>
+                    <td><button class="btn btn-danger btn-sm delete-popular" data-id="${item.productId}">Удалить</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ---------- РЕДАКТИРОВАНИЕ ДЛЯ ПРОМО, НОВОСТЕЙ, СЛАЙДОВ ----------
+        // Промо
+        let editingPromoId = null;
+        const promoForm = document.getElementById('promo-form');
+        const promoId = document.getElementById('promo-id');
+        const promoTitle = document.getElementById('promo-title');
+        const promoDesc = document.getElementById('promo-desc');
+        const promoBg = document.getElementById('promo-bg');
+        const promoBtnText = document.getElementById('promo-btn-text');
+        const promoLink = document.getElementById('promo-link');
+        const promoSubmit = document.getElementById('promo-submit');
+        const promoCancelBtn = document.getElementById('promo-cancel-edit');
+
+        function resetPromoForm() {
+            promoForm.reset();
+            editingPromoId = null;
+            promoSubmit.textContent = '➕ Добавить';
+            promoCancelBtn.style.display = 'none';
+            promoId.disabled = false;
+        }
+
+        function editPromo(id) {
+            const p = promos.find(p => p.id === id);
+            if (!p) return;
+            promoId.value = p.id;
+            promoTitle.value = p.title || '';
+            promoDesc.value = p.desc || '';
+            promoBg.value = p.bg || '#c49a3f';
+            promoBtnText.value = p.btnText || 'Подробнее';
+            promoLink.value = p.link || '#';
+            editingPromoId = id;
+            promoId.disabled = true;
+            promoSubmit.textContent = '💾 Сохранить';
+            promoCancelBtn.style.display = 'inline-flex';
+        }
+
+        promoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = promoId.value.trim();
+            if (!id) return alert('Введите ID');
+            const promoItem = {
+                id, title: promoTitle.value, desc: promoDesc.value,
+                bg: promoBg.value, btnText: promoBtnText.value, link: promoLink.value
+            };
+            if (editingPromoId) {
+                const idx = promos.findIndex(p => p.id === editingPromoId);
+                if (idx !== -1) promos[idx] = promoItem;
+            } else {
+                if (promos.some(p => p.id === id)) return alert('ID уже существует');
+                promos.push(promoItem);
+            }
+            savePromos();
+            renderPromos();
+            resetPromoForm();
+            showToast('Акция сохранена');
+        });
+        promoCancelBtn.addEventListener('click', resetPromoForm);
+        document.getElementById('promo-clear').addEventListener('click', resetPromoForm);
+
+        // Новости
+        let editingNewsId = null;
+        const newsForm = document.getElementById('news-form');
+        const newsId = document.getElementById('news-id');
+        const newsDate = document.getElementById('news-date');
+        const newsTitle = document.getElementById('news-title');
+        const newsText = document.getElementById('news-text');
+        const newsSubmit = document.getElementById('news-submit');
+        const newsCancelBtn = document.getElementById('news-cancel-edit');
+
+        function resetNewsForm() {
+            newsForm.reset();
+            editingNewsId = null;
+            newsSubmit.textContent = '➕ Добавить';
+            newsCancelBtn.style.display = 'none';
+            newsId.disabled = false;
+        }
+
+        function editNews(id) {
+            const n = news.find(n => n.id === id);
+            if (!n) return;
+            newsId.value = n.id;
+            newsDate.value = n.date || '';
+            newsTitle.value = n.title || '';
+            newsText.value = n.text || '';
+            editingNewsId = id;
+            newsId.disabled = true;
+            newsSubmit.textContent = '💾 Сохранить';
+            newsCancelBtn.style.display = 'inline-flex';
+        }
+
+        newsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = newsId.value.trim();
+            if (!id) return alert('Введите ID');
+            const newsItem = {
+                id, date: newsDate.value, title: newsTitle.value, text: newsText.value
+            };
+            if (editingNewsId) {
+                const idx = news.findIndex(n => n.id === editingNewsId);
+                if (idx !== -1) news[idx] = newsItem;
+            } else {
+                if (news.some(n => n.id === id)) return alert('ID уже существует');
+                news.push(newsItem);
+            }
+            saveNews();
+            renderNews();
+            resetNewsForm();
+            showToast('Новость сохранена');
+        });
+        newsCancelBtn.addEventListener('click', resetNewsForm);
+        document.getElementById('news-clear').addEventListener('click', resetNewsForm);
+
+        // Слайды
+        let editingSlideId = null;
+        const slideForm = document.getElementById('carousel-form');
+        const slideId = document.getElementById('slide-id');
+        const slideTitle = document.getElementById('slide-title');
+        const slideSubtitle = document.getElementById('slide-subtitle');
+        const slideBg = document.getElementById('slide-bg');
+        const slideBtnText = document.getElementById('slide-btn-text');
+        const slideLink = document.getElementById('slide-link');
+        const slideSubmit = document.getElementById('carousel-submit');
+        const slideCancelBtn = document.getElementById('carousel-cancel-edit');
+
+        function resetSlideForm() {
+            slideForm.reset();
+            editingSlideId = null;
+            slideSubmit.textContent = '➕ Добавить';
+            slideCancelBtn.style.display = 'none';
+            slideId.disabled = false;
+        }
+
+        function editSlide(id) {
+            const s = slides.find(s => s.id === id);
+            if (!s) return;
+            slideId.value = s.id;
+            slideTitle.value = s.title || '';
+            slideSubtitle.value = s.subtitle || '';
+            slideBg.value = s.bg || '#1e2a2e';
+            slideBtnText.value = s.btnText || 'Смотреть';
+            slideLink.value = s.link || 'catalog.html';
+            editingSlideId = id;
+            slideId.disabled = true;
+            slideSubmit.textContent = '💾 Сохранить';
+            slideCancelBtn.style.display = 'inline-flex';
+        }
+
+        slideForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = slideId.value.trim();
+            if (!id) return alert('Введите ID');
+            const slideItem = {
+                id, title: slideTitle.value, subtitle: slideSubtitle.value,
+                bg: slideBg.value, btnText: slideBtnText.value, link: slideLink.value
+            };
+            if (editingSlideId) {
+                const idx = slides.findIndex(s => s.id === editingSlideId);
+                if (idx !== -1) slides[idx] = slideItem;
+            } else {
+                if (slides.some(s => s.id === id)) return alert('ID уже существует');
+                slides.push(slideItem);
+            }
+            saveSlides();
+            renderCarousel();
+            resetSlideForm();
+            showToast('Слайд сохранён');
+        });
+        slideCancelBtn.addEventListener('click', resetSlideForm);
+        document.getElementById('carousel-clear').addEventListener('click', resetSlideForm);
+
+        // Прикрепляем глобальные обработчики для кнопок edit/delete (уже есть через делегирование)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-promo')) editPromo(e.target.dataset.id);
+            if (e.target.classList.contains('delete-promo')) {
+                const id = e.target.dataset.id;
+                promos = promos.filter(p => p.id !== id);
+                savePromos();
+                renderPromos();
+                if (editingPromoId === id) resetPromoForm();
+                showToast('Акция удалена');
+            }
+            if (e.target.classList.contains('edit-news')) editNews(e.target.dataset.id);
+            if (e.target.classList.contains('delete-news')) {
+                const id = e.target.dataset.id;
+                news = news.filter(n => n.id !== id);
+                saveNews();
+                renderNews();
+                if (editingNewsId === id) resetNewsForm();
+                showToast('Новость удалена');
+            }
+            if (e.target.classList.contains('edit-slide')) editSlide(e.target.dataset.id);
+            if (e.target.classList.contains('delete-slide')) {
+                const id = e.target.dataset.id;
+                slides = slides.filter(s => s.id !== id);
+                saveSlides();
+                renderCarousel();
+                if (editingSlideId === id) resetSlideForm();
+                showToast('Слайд удалён');
+            }
+            if (e.target.classList.contains('delete-popular')) {
+                const id = Number(e.target.dataset.id);
+                popular = popular.filter(p => p.productId !== id);
+                savePopular();
+                renderPopular();
+                showToast('Удалено из популярных');
+            }
+        });
+
+        // ---------- КАТАЛОГ (без изменений, но оставляем старый код редактирования) ----------
+        let editingWeaponId = null;
+        const weaponForm = document.getElementById('weapon-form');
+        const idInput = document.getElementById('weapon-id');
+        const nameInput = document.getElementById('weapon-name');
+        const brandInput = document.getElementById('weapon-brand');
+        const categoryInput = document.getElementById('weapon-category');
+        const priceInput = document.getElementById('weapon-price');
+        const priceStrInput = document.getElementById('weapon-priceStr');
+        const imgLabelInput = document.getElementById('weapon-imgLabel');
+        const imgFileInput = document.getElementById('weapon-imgFile');
+        const descInput = document.getElementById('weapon-desc');
+        const catalogSubmit = document.getElementById('catalog-submit-btn');
+        const catalogCancelBtn = document.getElementById('catalog-cancel-edit');
+
+        function resetWeaponForm() {
+            weaponForm.reset();
+            editingWeaponId = null;
+            idInput.readOnly = false;
+            catalogSubmit.textContent = '➕ Добавить';
+            catalogCancelBtn.style.display = 'none';
+        }
+        function editWeapon(id) {
+            const w = weapons.find(w => w.id === id);
+            if (!w) return;
+            idInput.value = w.id;
+            nameInput.value = w.name;
+            brandInput.value = w.brand||'';
+            categoryInput.value = w.category||'';
+            priceInput.value = w.price||'';
+            priceStrInput.value = w.priceStr||'';
+            imgLabelInput.value = w.imgLabel||'';
+            imgFileInput.value = w.imgFile||'';
+            descInput.value = w.desc||'';
+            editingWeaponId = id;
+            idInput.readOnly = true;
+            catalogSubmit.textContent = '💾 Сохранить';
+            catalogCancelBtn.style.display = 'inline-flex';
+        }
+        weaponForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const id = Number(idInput.value);
+            const name = nameInput.value.trim();
+            const price = Number(priceInput.value)||0;
+            if (!id || !name) return alert('ID и Название обязательны');
+            const newWeapon = {
+                id, name, brand: brandInput.value.trim(), category: categoryInput.value.trim(),
+                price, priceStr: priceStrInput.value.trim(),
+                imgLabel: imgLabelInput.value.trim(), imgFile: imgFileInput.value.trim(), desc: descInput.value.trim()
+            };
+            if (editingWeaponId) {
+                const idx = weapons.findIndex(w => w.id === editingWeaponId);
+                if(idx !== -1) weapons[idx] = newWeapon;
+            } else {
+                if (weapons.some(w => w.id === id)) return alert('ID уже существует');
+                weapons.push(newWeapon);
+            }
+            weapons.sort((a,b)=>a.id-b.id);
+            saveWeapons(); renderCatalog(); resetWeaponForm(); showToast('Сохранено');
+        });
+        document.getElementById('catalog-clear-form').addEventListener('click', resetWeaponForm);
+        catalogCancelBtn.addEventListener('click', resetWeaponForm);
+        document.getElementById('catalog-reset-default').addEventListener('click', () => {
+            if(confirm('Сбросить каталог до заводского?')) { weapons = [...DEFAULT_WEAPONS]; saveWeapons(); renderCatalog(); }
+        });
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('edit-catalog')) editWeapon(Number(e.target.dataset.id));
+            if (e.target.classList.contains('delete-catalog')) {
+                const id = Number(e.target.dataset.id);
+                if (confirm('Удалить товар?')) {
+                    weapons = weapons.filter(w => w.id !== id);
+                    saveWeapons();
+                    Shop.removeProductFromAllStorages(id);
+                    popular = popular.filter(p => p.productId !== id);
+                    savePopular();
+                    renderCatalog(); renderPopular();
+                    showToast('Товар удалён');
+                }
+            }
+        });
+
+        // ---------- ИМПОРТ / ЭКСПОРТ JSON ----------
+        function exportToJSON() {
+            const fullData = {
+                weapons, promos, news, slides, popular
+            };
+            const dataStr = JSON.stringify(fullData, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `admin_backup_${new Date().toISOString().slice(0,19)}.json`;
+            a.click();
+            showToast('✅ Данные экспортированы в JSON');
+        }
+
+        function importFromJSON(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.weapons) weapons = data.weapons;
+                    if (data.promos) promos = data.promos;
+                    if (data.news) news = data.news;
+                    if (data.slides) slides = data.slides;
+                    if (data.popular) popular = data.popular;
+                    // Сохраняем в localStorage
+                    saveWeapons();
+                    savePromos();
+                    saveNews();
+                    saveSlides();
+                    savePopular();
+                    // Перерисовываем все таблицы
+                    renderCatalog();
+                    renderPromos();
+                    renderNews();
+                    renderCarousel();
+                    renderPopular();
+                    // Сбрасываем формы редактирования
+                    resetWeaponForm();
+                    resetPromoForm();
+                    resetNewsForm();
+                    resetSlideForm();
+                    showToast('✅ Данные успешно импортированы');
+                } catch(err) {
+                    alert('Ошибка при разборе JSON: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('export-json').addEventListener('click', exportToJSON);
+        const importFileInput = document.getElementById('import-json-file');
+        importFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                importFromJSON(e.target.files[0]);
+                importFileInput.value = ''; // очищаем, чтобы можно было загрузить тот же файл повторно
+            }
+        });
+
+        // ---------- ОСТАЛЬНЫЕ ЭКСПОРТЫ (оригинальные) ----------
+        document.getElementById('export-mainjs').addEventListener('click', () => {
+            const content = `// Экспортированный каталог\nconst weaponsCatalog = ${JSON.stringify(weapons, null, 2)};\nif (typeof window !== 'undefined') { window.shopContent = window.shopContent || {}; window.shopContent.weaponsCatalog = weaponsCatalog; }`;
+            const blob = new Blob([content], {type: 'application/javascript'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'catalog-data.js'; a.click();
+            showToast('Каталог экспортирован (JS)');
+        });
+        document.getElementById('export-all-content').addEventListener('click', () => {
+            const fileContent = `// Экспортированный контент\nconst weaponsCatalog = ${JSON.stringify(weapons, null, 2)};\nconst promosData = ${JSON.stringify(promos, null, 2)};\nconst newsData = ${JSON.stringify(news, null, 2)};\nconst carouselSlides = ${JSON.stringify(slides, null, 2)};\nconst popularProducts = ${JSON.stringify(popular, null, 2)};\nif (typeof window !== 'undefined') { window.shopContent = { weaponsCatalog, promosData, newsData, carouselSlides, popularProducts }; }`;
+            const blob = new Blob([fileContent], { type: 'application/javascript' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'content.js'; a.click();
+            showToast('📦 Весь контент экспортирован (JS)');
+        });
+
+        // Популярные
+        const popularForm = document.getElementById('popular-form');
+        popularForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const productId = Number(document.getElementById('popular-product-id').value);
+            const priority = Number(document.getElementById('popular-priority').value) || 1;
+            if (!productId) return alert('Введите ID товара');
+            if (!weapons.some(w => w.id === productId)) return alert('Товар не найден в каталоге');
+            const existing = popular.find(p => p.productId === productId);
+            if (existing) existing.priority = priority;
+            else popular.push({ productId, priority });
+            savePopular(); renderPopular(); popularForm.reset(); showToast('Добавлено');
+        });
+
+        // ---------- ТАБЫ ----------
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`pane-${target}`).classList.add('active');
+            });
+        });
+
+        // Автозаполнение priceStr
+        priceInput.addEventListener('blur', () => {
+            if (!priceStrInput.value && priceInput.value)
+                priceStrInput.value = Number(priceInput.value).toLocaleString('ru-RU') + ' ₽';
+        });
+
+        // Финальный запуск
+        loadAllData();
+        renderCatalog();
+        renderPromos();
+        renderNews();
+        renderCarousel();
+        renderPopular();
+    }
+</script>
+</body>
+</html>

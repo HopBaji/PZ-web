@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас · Охота и Рыбалка</title>
+    <link rel="icon" type="image/png" href="images/title.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-about">
+    <div id="toast" class="toast-message"></div>
+
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог</a>
+                <a href="about.html" class="active">О нас</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="compare.html" class="action-btn" id="compareBtn" title="Сравнить товары">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero-секция -->
+        <section class="about-hero">
+            <h1>ОХОТАРЫБАЛКА — ваш надёжный партнёр</h1>
+            <p>Продажа товаров, от которых зависит жизнь и здоровье — огромная ответственность. Интернет-магазин «ОХОТАРЫБАЛКА» — это не витрина, а официальный дилер ведущих заводов (ТОЗ, Молот, Байкал, Salmo, Shimano и др.).</p>
+        </section>
+
+        <!-- Миссия и ценности -->
+        <section class="about-section">
+            <h2>Не продаём железки. Продаём драйв.</h2>
+            <p style="font-size: 18px; line-height: 1.6; margin-bottom: 30px;">Привет! Мы — команда энтузиастов. У каждого из нас есть «то самое место», куда не берут спутниковый телефон, и «тот самый спиннинг», который подарил дед.</p>
+            <p style="font-size: 18px; line-height: 1.6; margin-bottom: 30px;">Мы открыли этот магазин, потому что устали от навязывания бесполезных товаров в сетевых гипермаркетах. У нас вы не найдете менеджера, который скажет: «Возьмите самую дорогую палатку, она самая лучшая».</p>
+            <p style="font-size: 18px; line-height: 1.6; margin-bottom: 30px;">Что вы получите у нас:</p>
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <h3>&#129508; Своё снаряжение.</h3>
+                    <p>Мы не перекупаем неизвестные остатки на Авито. У нас прямой импорт и контракты с заводами, поэтому цены ниже, а подделок — ноль.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>&#128199; Честные характеристики.</h3>
+                    <p>Не пишем «убивает на 2 км». Мы тестируем дальномеры и прицелы на реальной местности. Если китайский свитер колется — так и скажем.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>&#128076; Ручная проверка</h3>
+                    <p>Каждый нож, катушка и фонарь перед отправкой проходят «полевой контроль» (хотя бы открыл/закрыл/покрутил). Бракованные партии отправляем поставщику обратно — не хотим портить вам выезд.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>&#128222; Консультация от практика.</h3>
+                    <p>Не знаете, что взять на весеннего гуся или на осеннего кабана? Звоните. Мы спросим про ваш бюджет, регион, манеру охоты — и предложим 2-3 варианта, а не 20 «на любой случай».</p>
+                </div>
+                <div class="mission-card">
+                    <h3>🎣 Рыболовам</h3>
+                    <p>Удилища, катушки, приманки, эхолоты и лодки от мировых производителей. Регулярные поставки новинок и сезонные скидки.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>&#127919; Для охотников</h3>
+                    <p>Вы получите проверенное на морозах и дожде снаряжение от проверенных брендов без подделок — от термобелья до оптики. Гарантия на всё, честная консультация бывалого охотника и быстрая замена брака без лишних вопросов.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Преимущества -->
+        <section class="about-section">
+            <h2>Почему выбирают нас</h2>
+            <div class="advantages-list">
+                <div class="advantage-item">
+                    <div class="advantage-icon">✅</div>
+                    <h4>Гарантия качества</h4>
+                    <p>Только оригинальная продукция с официальной гарантией.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🚚</div>
+                    <h4>Быстрая доставка</h4>
+                    <p>Отправка по всей России. Курьером или в пункты выдачи.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">💬</div>
+                    <h4>Экспертная поддержка</h4>
+                    <p>Опытные консультанты помогут с выбором снаряжения.</p>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-icon">🔄</div>
+                    <h4>Обмен и возврат</h4>
+                    <p>Без проблем в течение 14 дней.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Команда (условная) -->
+        <section class="about-section">
+            <h2>Наша команда</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('images/team1.jpg'); background-color: #a7b09e;"></div>
+                    <h4>Бубнов Владислав</h4>
+                    <p>Руководитель производственных помещений химического комбината №16</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('images/team2.jpg'); background-color: #b0aa93;"></div>
+                    <h4>Семашко Родион</h4>
+                    <p>Специалист по рыбам</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-photo" style="background-image: url('images/team3.jpg'); background-color: #8f9e8a;"></div>
+                    <h4>Шведов Дмитрий</h4>
+                    <p>У меня лапки.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контакты кратко -->
+        <section class="about-section">
+            <h2>Контакты</h2>
+            <div class="contacts-block">
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <div><strong>Телефон:</strong><br>8 (800) 123-45-67</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✉️</span>
+                    <div><strong>Email:</strong><br>info@huntfish.ru</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <div><strong>Адрес:</strong><br>г. Москва, ул. Охотничья, 15</div>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🕒</span>
+                    <div><strong>Режим работы:</strong><br>Пн–Вс: 10:00 – 20:00</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="about.html">О компании</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="vacancies.html">Вакансии</a></li>
+                    <li><a href="privacy.html">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="howtoorder.html">Как заказать</a></li>
+                    <li><a href="payment.html">Оплата</a></li>
+                    <li><a href="delivery.html">Доставка</a></li>
+                    <li><a href="returns.html">Возврат</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <ul>
+                    <li>📞 8 (800) 123-45-67</li>
+                    <li>✉️ info@huntfish.ru</li>
+                    <li>📍 г. Москва, ул. Охотничья, 15</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 Охотничий и рыболовный магазин. Все права защищены.
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

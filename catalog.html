@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог · Охота и Рыбалка</title>
+    <link rel="icon" type="image/png" href="images/title.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-catalog">
+    <div id="toast" class="toast-message"></div>
+
+    <header class="header">
+        <div class="header-top">
+            <div class="logo" id="logoBtn">ОХОТАРЫБАЛКА</div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html" class="active">Каталог</a>
+                <a href="about.html">О нас</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                <button id="searchBtn">Найти</button>
+            </div>
+            <div class="user-actions">
+                <a href="compare.html" class="action-btn" id="compareBtn">⚖️ Сравнить <span class="count" id="compareCount">0</span></a>
+                <a href="favorites.html" class="action-btn" id="favoriteBtn">❤️ Избранное <span class="count" id="favoriteCount">0</span></a>
+                <a href="cart.html" class="action-btn" id="cartBtn">🛒 Корзина <span class="count" id="cartCount">0</span></a>
+            </div>
+        </div>
+    </header>
+
+   <main class="main-content">
+        <aside class="filters-sidebar">
+            <h3>Фильтры</h3>
+            <div class="filter-group">
+                <h4>Бренды <span class="filter-reset" id="resetBrands">сбросить</span></h4>
+                <div id="brandFilters"></div>
+            </div>
+            <div class="filter-group">
+                <h4>Категории <span class="filter-reset" id="resetCategories">сбросить</span></h4>
+                <div id="categoryFilters"></div>
+            </div>
+            <div class="filter-group">
+                <h4>Цена, ₽</h4>
+                <div class="price-range">
+                    <input type="number" id="priceMin" placeholder="от" value="0">
+                    <span>—</span>
+                    <input type="number" id="priceMax" placeholder="до" value="100000">
+                </div>
+                <button class="apply-price" id="applyPrice">Применить</button>
+            </div>
+            <button class="reset-all-filters" id="resetAllFilters">Сбросить все фильтры</button>
+        </aside>
+
+        <section class="catalog-section">
+            <div class="catalog-header">
+                <h1>Каталог снаряжения</h1>
+                <div class="catalog-controls">
+                    <select class="sort-select" id="sortSelect">
+                        <option value="default">По умолчанию</option>
+                        <option value="priceAsc">Цена: по возрастанию</option>
+                        <option value="priceDesc">Цена: по убыванию</option>
+                        <option value="name">Название (А-Я)</option>
+                    </select>
+                    <div class="view-options">
+                        <button class="view-btn active" data-grid="4">▦▦</button>
+                        <button class="view-btn" data-grid="3">▦▦▦</button>
+                    </div>
+                </div>
+            </div>
+            <div id="productsContainer" class="product-grid grid-4"></div>
+            <div class="pagination" id="pagination"></div>
+            <div id="resultInfo"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section"><h4>О магазине</h4><ul><li><a href="about.html">О компании</a></li><li><a href="news.html">Новости</a></li><li><a href="vacancies.html">Вакансии</a></li><li><a href="privacy.html">Политика конфиденциальности</a></li></ul></div>
+            <div class="footer-section"><h4>Покупателям</h4><ul><li><a href="howtoorder.html">Как заказать</a></li><li><a href="payment.html">Оплата</a></li><li><a href="delivery.html">Доставка</a></li><li><a href="returns.html">Возврат</a></li></ul></div>
+            <div class="footer-section"><h4>Контакты</h4><ul><li>📞 8 (800) 123-45-67</li><li>✉️ info@huntfish.ru</li><li>📍 г. Москва, ул. Охотничья, 15</li></ul></div>
+        </div>
+        <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
+    </footer>
+
+    <script src="js/content.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        (function(){
+            const { loadProducts, getArray, setArray, syncCounters, showToast, escapeHtml,
+                    addToCompare, addToFavorite, addToCart } = Shop;
+
+            let productsData = loadProducts();
+            const allBrands = [...new Set(productsData.map(p => p.brand).filter(Boolean))];
+            const allCategories = [...new Set(productsData.map(p => p.category).filter(Boolean))];
+
+            // Состояние фильтров
+            let filters = {
+                brands: new Set(),
+                categories: new Set(),
+                priceMin: 0,
+                priceMax: 100000,
+                searchQuery: ''
+            };
+            let currentSort = 'default';
+            let currentPage = 1;
+            const itemsPerPage = 12;
+            let filteredProducts = [];
+
+            // Извлечение параметра поиска из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search') || '';
+            if (searchParam) {
+                filters.searchQuery = searchParam;
+                document.getElementById('searchInput').value = searchParam;
+            }
+
+            // Рендер чекбоксов фильтров
+            function renderFilterCheckboxes() {
+                const brandDiv = document.getElementById('brandFilters');
+                const catDiv = document.getElementById('categoryFilters');
+                brandDiv.innerHTML = allBrands.map(b => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${b}" ${filters.brands.has(b) ? 'checked' : ''}> ${escapeHtml(b)}
+                    </label>
+                `).join('');
+                catDiv.innerHTML = allCategories.map(c => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${c}" ${filters.categories.has(c) ? 'checked' : ''}> ${escapeHtml(c)}
+                    </label>
+                `).join('');
+
+                brandDiv.querySelectorAll('input').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target.checked) filters.brands.add(e.target.value);
+                        else filters.brands.delete(e.target.value);
+                        applyFilters();
+                    });
+                });
+                catDiv.querySelectorAll('input').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target.checked) filters.categories.add(e.target.value);
+                        else filters.categories.delete(e.target.value);
+                        applyFilters();
+                    });
+                });
+            }
+
+            function applyFilters() {
+                let filtered = productsData.filter(p => {
+                    if (filters.searchQuery && !p.name.toLowerCase().includes(filters.searchQuery.toLowerCase())) return false;
+                    if (filters.brands.size && !filters.brands.has(p.brand)) return false;
+                    if (filters.categories.size && !filters.categories.has(p.category)) return false;
+                    const price = p.price || 0;
+                    if (price < filters.priceMin || price > filters.priceMax) return false;
+                    return true;
+                });
+
+                // Сортировка
+                if (currentSort === 'priceAsc') filtered.sort((a,b) => (a.price||0) - (b.price||0));
+                else if (currentSort === 'priceDesc') filtered.sort((a,b) => (b.price||0) - (a.price||0));
+                else if (currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+                filteredProducts = filtered;
+                currentPage = 1;
+                renderProducts();
+            }
+
+            function renderProducts() {
+                const container = document.getElementById('productsContainer');
+                const paginationDiv = document.getElementById('pagination');
+                const resultInfo = document.getElementById('resultInfo');
+                const total = filteredProducts.length;
+                const totalPages = Math.ceil(total / itemsPerPage);
+                const start = (currentPage - 1) * itemsPerPage;
+                const pageProducts = filteredProducts.slice(start, start + itemsPerPage);
+
+                if (!pageProducts.length) {
+                    container.innerHTML = '<div class="no-products">😕 Товары не найдены</div>';
+                    paginationDiv.innerHTML = '';
+                    resultInfo.textContent = '';
+                    return;
+                }
+
+                // Генерация карточек через централизованную функцию
+                container.innerHTML = pageProducts.map(p => Shop.renderProductCard(p)).join('');
+                // Привязываем обработчики кликов
+                Shop.attachProductCardListeners(container, productsData);
+
+                // Пагинация
+                let pagesHtml = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    pagesHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+                }
+                paginationDiv.innerHTML = pagesHtml;
+                document.querySelectorAll('.page-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        currentPage = parseInt(btn.dataset.page);
+                        renderProducts();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                });
+                resultInfo.textContent = `Показано ${pageProducts.length} из ${total} товаров`;
+            }
+
+            // Обработчики сброса фильтров
+            document.getElementById('resetBrands').addEventListener('click', () => {
+                filters.brands.clear();
+                renderFilterCheckboxes();
+                applyFilters();
+            });
+            document.getElementById('resetCategories').addEventListener('click', () => {
+                filters.categories.clear();
+                renderFilterCheckboxes();
+                applyFilters();
+            });
+            document.getElementById('resetAllFilters').addEventListener('click', () => {
+                filters.brands.clear();
+                filters.categories.clear();
+                filters.searchQuery = '';
+                document.getElementById('searchInput').value = '';
+                // Сброс цены
+                document.getElementById('priceMin').value = '';
+                document.getElementById('priceMax').value = '';
+                filters.priceMin = 0;
+                filters.priceMax = 100000;
+                renderFilterCheckboxes();
+                applyFilters();
+                showToast('Все фильтры сброшены');
+            });
+            document.getElementById('applyPrice').addEventListener('click', () => {
+                let min = parseInt(document.getElementById('priceMin').value) || 0;
+                let max = parseInt(document.getElementById('priceMax').value) || 100000;
+                if (min > max) [min, max] = [max, min];
+                filters.priceMin = min;
+                filters.priceMax = max;
+                applyFilters();
+            });
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                applyFilters();
+            });
+
+            // Переключение вида сетки
+            const gridContainer = document.getElementById('productsContainer');
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const cols = btn.dataset.grid;
+                    gridContainer.classList.remove('grid-3', 'grid-4');
+                    gridContainer.classList.add(`grid-${cols}`);
+                });
+            });
+
+            // Инициализация поиска в шапке
+            Shop.initHeaderSearch();
+            Shop.initLogo();
+            syncCounters();
+            renderFilterCheckboxes();
+            applyFilters();
+        })();
+    </script>
+</body>
+</html>
