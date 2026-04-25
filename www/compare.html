@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Сравнение товаров · Охота и Рыбалка</title>
-    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="icon" type="image/png" href="images/title.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .compare-hero { background: linear-gradient(rgba(30,42,46,0.7),rgba(30,42,46,0.7)), url('imges/compare-bg.jpg') center/cover; background-color: #2c3e50; color: white; padding: 45px 40px; border-radius: 16px; margin-bottom: 30px; text-align: center; }
+        .compare-hero { background: linear-gradient(rgba(30,42,46,0.7),rgba(30,42,46,0.7)), url('images/compare-bg.jpg') center/cover; background-color: #2c3e50; color: white; padding: 45px 40px; border-radius: 16px; margin-bottom: 30px; text-align: center; }
         .compare-hero h1 { font-size: 42px; margin-bottom: 10px; }
         .compare-container { margin-bottom: 30px; }
         .empty-compare { text-align: center; padding: 60px 30px; background: #fffaf3; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -24,7 +24,7 @@
         @media (max-width: 700px) { .compare-table th, .compare-table td { padding: 10px; font-size: 13px; } .compare-product-image { width: 80px; height: 80px; } }
     </style>
 </head>
-<body>
+<body class="page-compare">
     <div id="toast" class="toast-message"></div>
     <header class="header">
         <div class="header-top">
@@ -48,7 +48,7 @@
         </div>
     </header>
 
-    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1400px; margin: 0 auto; width: 100%;">
+       <main class="main-content">
         <section class="compare-hero">
             <h1>Сравнение товаров</h1>
             <p>Выберите до 4 товаров, чтобы сравнить их характеристики</p>
@@ -65,118 +65,89 @@
         <div class="copyright">© 2026 Охотничий и рыболовный магазин. Все права защищены.</div>
     </footer>
 
+        <script src="js/content.js"></script>
+    <script src="js/common.js"></script>
     <script src="js/content.js"></script>
-    <script>
-        (function() {
-            // Загрузка каталога
-            let productsData = [];
-            if (window.shopContent?.weaponsCatalog) productsData = window.shopContent.weaponsCatalog;
-            else if (localStorage.getItem('weapons_catalog')) productsData = JSON.parse(localStorage.getItem('weapons_catalog'));
-            
-            console.log('compare.html: загружено товаров', productsData.length);
+<script src="js/common.js"></script>
+<script>
+(function() {
+  if (typeof Shop === 'undefined') {
+    console.error('Shop не загружен');
+    return;
+  }
 
-            const STORAGE_KEYS = {
-                COMPARE: 'huntfish_compare',
-                FAVORITE: 'huntfish_favorite',
-                CART: 'huntfish_cart'
-            };
+  const { loadProducts, getArray, setArray, syncCounters, showToast, escapeHtml, addToCart, removeFromCompare } = Shop;
+  let productsData = loadProducts();
 
-            function getStorageArray(key) {
-                try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
-            }
-            function setStorageArray(key, arr) {
-                localStorage.setItem(key, JSON.stringify(arr));
-                syncCounters();
-            }
-            function syncCounters() {
-                const compareSpan = document.getElementById('compareCount');
-                const favoriteSpan = document.getElementById('favoriteCount');
-                const cartSpan = document.getElementById('cartCount');
-                if (compareSpan) compareSpan.textContent = getStorageArray(STORAGE_KEYS.COMPARE).length;
-                if (favoriteSpan) favoriteSpan.textContent = getStorageArray(STORAGE_KEYS.FAVORITE).length;
-                if (cartSpan) cartSpan.textContent = getStorageArray(STORAGE_KEYS.CART).length;
-            }
-            function showToast(msg, duration=2500) {
-                const toast = document.getElementById('toast');
-                if (!toast) return;
-                toast.textContent = msg;
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), duration);
-            }
-            function addToCart(id, name) {
-                let arr = getStorageArray(STORAGE_KEYS.CART);
-                arr.push(id);
-                setStorageArray(STORAGE_KEYS.CART, arr);
-                showToast(`🛒 ${name} добавлен в корзину`);
-            }
-            function removeFromCompare(id) {
-                let arr = getStorageArray(STORAGE_KEYS.COMPARE);
-                arr = arr.filter(item => item !== id);
-                setStorageArray(STORAGE_KEYS.COMPARE, arr);
-                renderComparePage();
-                showToast('Удалено из сравнения');
-            }
-            function renderComparePage() {
-                const container = document.getElementById('compareContent');
-                const ids = getStorageArray(STORAGE_KEYS.COMPARE);
-                console.log('compare.html: IDs для сравнения', ids);
-                const prods = productsData.filter(p => ids.includes(p.id));
-                console.log('compare.html: найдено товаров', prods.length);
-                if (!prods.length) {
-                    container.innerHTML = `<div class="empty-compare"><p>😕 Нет товаров для сравнения</p><a href="catalog.html">В каталог</a></div>`;
-                    return;
-                }
-                let html = `<table class="compare-table"><thead><tr><th>Характеристика</th>`;
-                prods.forEach(p => html += `<th>${escapeHtml(p.name)}</th>`);
-                html += `</tr></thead><tbody>`;
-                // Изображение
-                html += `<tr><td><strong>Изображение</strong></td>`;
-                prods.forEach(p => {
-                    const style = p.imgFile ? `background-image:url('imges/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : `background:#b8aa92;`;
-                    html += `<td><div class="compare-product-image" style="${style}">${!p.imgFile ? (p.imgLabel || p.brand || '🔫') : ''}</div></td>`;
-                });
-                html += `</tr>`;
-                // Бренд
-                html += `<tr><td><strong>Бренд</strong></td>${prods.map(p => `<td>${escapeHtml(p.brand || '—')}</td>`).join('')}</tr>`;
-                // Категория
-                html += `<tr><td><strong>Категория</strong></td>${prods.map(p => `<td>${escapeHtml(p.category || '—')}</td>`).join('')}</tr>`;
-                // Цена
-                html += `<tr><td><strong>Цена</strong></td>${prods.map(p => `<td class="compare-product-price">${p.priceStr || (p.price ? p.price.toLocaleString('ru-RU')+' ₽' : '—')}</td>`).join('')}</tr>`;
-                // Описание
-                html += `<tr><td><strong>Описание</strong></td>${prods.map(p => `<td>${escapeHtml(p.desc || '—')}</td>`).join('')}</tr>`;
-                // Действия
-                html += `<tr><td><strong>Действия</strong></td>`;
-                prods.forEach(p => {
-                    html += `<td>
-                        <button class="remove-from-compare" data-id="${p.id}">❌ Удалить</button>
-                        <button class="add-to-cart-btn" data-id="${p.id}">🛒 В корзину</button>
-                    </td>`;
-                });
-                html += `</tr></tbody></table>`;
-                container.innerHTML = html;
-                // Обработчики
-                document.querySelectorAll('.remove-from-compare').forEach(btn => {
-                    btn.addEventListener('click', (e) => removeFromCompare(parseInt(btn.dataset.id)));
-                });
-                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = parseInt(btn.dataset.id);
-                        const product = productsData.find(p => p.id === id);
-                        if (product) addToCart(id, product.name);
-                    });
-                });
-            }
-            function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-            // Поиск и логотип
-            document.getElementById('logoBtn')?.addEventListener('click', () => window.location.href = 'index.html');
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            function performSearch() { window.location.href = `catalog.html?search=${encodeURIComponent(searchInput.value.trim())}`; }
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-            syncCounters();
-            renderComparePage();
-        })();
-    </script>
+  function renderComparePage() {
+    const container = document.getElementById('compareContent');
+    if (!container) return;
+
+    let ids = getArray(Shop.STORAGE_KEYS.COMPARE);
+    if ((!productsData || productsData.length === 0) && ids.length > 0) {
+      productsData = loadProducts();
+    }
+
+    const prods = productsData.filter(p => ids.includes(p.id));
+
+    if (!prods.length) {
+      container.innerHTML = `<div class="empty-compare"><p>😕 Нет товаров для сравнения</p><a href="catalog.html">В каталог</a></div>`;
+      return;
+    }
+
+    let html = `<table class="compare-table"><thead><tr><th>Характеристика</th>`;
+    prods.forEach(p => html += `<th>${escapeHtml(p.name)}</th>`);
+    html += `</tr></thead><tbody>`;
+
+    // Изображение
+    html += `<tr><td><strong>Изображение</strong></td>`;
+    prods.forEach(p => {
+      const style = p.imgFile ? `background-image:url('images/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : `background:#b8aa92;`;
+      html += `<td><div class="compare-product-image" style="${style}">${!p.imgFile ? (escapeHtml(p.imgLabel) || escapeHtml(p.brand) || '🔫') : ''}</div></td>`;
+    });
+    html += `</tr>`;
+
+    // Бренд
+    html += `<tr><td><strong>Бренд</strong></td>${prods.map(p => `<td>${escapeHtml(p.brand || '—')}</td>`).join('')}</tr>`;
+    // Категория
+    html += `<tr><td><strong>Категория</strong></td>${prods.map(p => `<td>${escapeHtml(p.category || '—')}</td>`).join('')}</tr>`;
+    // Цена
+    html += `<tr><td><strong>Цена</strong></td>${prods.map(p => `<td class="compare-product-price">${p.priceStr || (p.price ? p.price.toLocaleString('ru-RU')+' ₽' : '—')}</td>`).join('')}</tr>`;
+    // Описание
+    html += `<tr><td><strong>Описание</strong></td>${prods.map(p => `<td>${escapeHtml(p.desc || '—')}</td>`).join('')}</tr>`;
+    // Действия
+    html += `<tr><td><strong>Действия</strong></td>`;
+    prods.forEach(p => {
+      html += `<td>
+        <button class="remove-from-compare" data-id="${p.id}">❌ Удалить</button>
+        <button class="add-to-cart-btn" data-id="${p.id}">🛒 В корзину</button>
+      </td>`;
+    });
+    html += `</tr></tbody></table>`;
+    container.innerHTML = html;
+
+    container.querySelectorAll('.remove-from-compare').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id);
+        removeFromCompare(id);
+        renderComparePage();
+        showToast('Удалено из сравнения');
+      });
+    });
+    container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id);
+        const product = productsData.find(p => p.id === id);
+        if (product) addToCart(id, product.name);
+      });
+    });
+  }
+
+  Shop.initHeaderSearch();
+  Shop.initLogo();
+  syncCounters();
+  renderComparePage();
+})();
+</script>
 </body>
 </html>

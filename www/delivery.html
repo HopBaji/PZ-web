@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Доставка · Охота и Рыбалка</title>
-    <link rel="icon" type="image/png" href="imges/title.png">
-    <!-- Общий CSS -->
+    <link rel="icon" type="image/png" href="images/title.png">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="page-delivery">
@@ -33,7 +32,7 @@
         </div>
     </header>
 
-    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1200px; margin: 0 auto; width: 100%;">
+    <main class="main-content">
         <!-- Hero-секция -->
         <section class="delivery-hero">
             <h1>Доставка по всей России</h1>
@@ -177,24 +176,24 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <<div class="footer-section">
-    <h4>О магазине</h4>
-    <ul>
-        <li><a href="about.html">О компании</a></li>
-        <li><a href="news.html">Новости</a></li>
-        <li><a href="vacancies.html">Вакансии</a></li>
-        <li><a href="privacy.html">Политика конфиденциальности</a></li>
-    </ul>
-</div>
-<div class="footer-section">
-    <h4>Покупателям</h4>
-    <ul>
-        <li><a href="howtoorder.html">Как заказать</a></li>
-        <li><a href="payment.html">Оплата</a></li>
-        <li><a href="delivery.html">Доставка</a></li>
-        <li><a href="returns.html">Возврат</a></li>
-    </ul>
-</div>
+            <div class="footer-section">
+                <h4>О магазине</h4>
+                <ul>
+                    <li><a href="about.html">О компании</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="vacancies.html">Вакансии</a></li>
+                    <li><a href="privacy.html">Политика конфиденциальности</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Покупателям</h4>
+                <ul>
+                    <li><a href="howtoorder.html">Как заказать</a></li>
+                    <li><a href="payment.html">Оплата</a></li>
+                    <li><a href="delivery.html">Доставка</a></li>
+                    <li><a href="returns.html">Возврат</a></li>
+                </ul>
+            </div>
             <div class="footer-section">
                 <h4>Контакты</h4>
                 <ul>
@@ -209,39 +208,22 @@
         </div>
     </footer>
 
-    <!-- Общий JS -->
+    <script src="js/common.js"></script>
     <script src="js/main.js"></script>
     <script>
         (function() {
-            // Поиск со страницы доставки -> каталог
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            function performSearch() {
-                const query = searchInput.value.trim();
-                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
-            }
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-
-            // FAQ аккордеон
+            // FAQ аккордеон (специфичный для страницы функционал)
             const faqItems = document.querySelectorAll('.faq-item');
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
                 const toggle = item.querySelector('.faq-toggle');
                 question.addEventListener('click', () => {
-                    const isActive = item.classList.contains('active');
-                    // Закрыть все (опционально, если хотите оставить только один открытым)
-                    // faqItems.forEach(i => i.classList.remove('active'));
                     item.classList.toggle('active');
                     if (toggle) {
                         toggle.textContent = item.classList.contains('active') ? '➖' : '➕';
                     }
                 });
             });
-
-            
-            const logo = document.getElementById('logoBtn');
-            if (logo) logo.addEventListener('click', () => window.location.href = 'index.html');
         })();
     </script>
 </body>

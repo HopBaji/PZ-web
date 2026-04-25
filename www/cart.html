@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина · Охота и Рыбалка</title>
-    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="icon" type="image/png" href="images/title.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .cart-hero {
-            background: linear-gradient(rgba(30, 42, 46, 0.8), rgba(30, 42, 46, 0.8)), url('imges/cart-bg.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(30, 42, 46, 0.8), rgba(30, 42, 46, 0.8)), url('images/cart-bg.jpg') center/cover no-repeat;
             background-color: #2c3e50;
             color: white;
             padding: 40px 30px;
@@ -103,7 +103,7 @@
         }
     </style>
 </head>
-<body>
+<body class="page-cart">
     <div id="toast" class="toast-message"></div>
 
     <header class="header">
@@ -128,7 +128,7 @@
         </div>
     </header>
 
-    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1200px; margin: 0 auto; width: 100%;">
+    <main class="main-content">
         <section class="cart-hero">
             <h1>Корзина</h1>
             <p>Ваши выбранные товары</p>
@@ -169,97 +169,103 @@
     </footer>
 
     <script src="js/content.js"></script>
-    <script>
-        (function() {
-            let productsData = [];
-            if (window.shopContent?.weaponsCatalog) productsData = window.shopContent.weaponsCatalog;
-            else if (localStorage.getItem('weapons_catalog')) productsData = JSON.parse(localStorage.getItem('weapons_catalog'));
+<script src="js/common.js"></script>
+<script>
+(function() {
+  if (typeof Shop === 'undefined') {
+    console.error('Shop не загружен');
+    return;
+  }
 
-            const STORAGE_KEYS = { CART: 'huntfish_cart', FAVORITE: 'huntfish_favorite', COMPARE: 'huntfish_compare' };
+  // ========== ФОРСИРОВАННАЯ ЗАПИСЬ КАТАЛОГА ==========
+  if (window.shopContent && window.shopContent.weaponsCatalog && window.shopContent.weaponsCatalog.length) {
+    const current = localStorage.getItem(Shop.STORAGE_KEYS.WEAPONS);
+    if (!current || JSON.parse(current).length === 0) {
+      localStorage.setItem(Shop.STORAGE_KEYS.WEAPONS, JSON.stringify(window.shopContent.weaponsCatalog));
+      console.log('✅ Каталог записан в localStorage');
+    }
+  }
 
-            function getStorageArray(key) {
-                try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
-            }
-            function setStorageArray(key, arr) {
-                localStorage.setItem(key, JSON.stringify(arr));
-                syncCounters();
-            }
-            function syncCounters() {
-                const compareSpan = document.getElementById('compareCount');
-                const favoriteSpan = document.getElementById('favoriteCount');
-                const cartSpan = document.getElementById('cartCount');
-                if (compareSpan) compareSpan.textContent = getStorageArray(STORAGE_KEYS.COMPARE).length;
-                if (favoriteSpan) favoriteSpan.textContent = getStorageArray(STORAGE_KEYS.FAVORITE).length;
-                if (cartSpan) cartSpan.textContent = getStorageArray(STORAGE_KEYS.CART).length;
-            }
-            function showToast(msg, duration=2500) {
-                const toast = document.getElementById('toast');
-                if (!toast) return;
-                toast.textContent = msg;
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), duration);
-            }
-            function removeFromCart(id) {
-                let cart = getStorageArray(STORAGE_KEYS.CART);
-                cart = cart.filter(item => item !== id);
-                setStorageArray(STORAGE_KEYS.CART, cart);
-                renderCart();
-                showToast('Товар удалён из корзины');
-            }
-            function renderCart() {
-                const container = document.getElementById('cartContent');
-                const cartIds = getStorageArray(STORAGE_KEYS.CART);
-                const items = productsData.filter(p => cartIds.includes(p.id));
-                if (!items.length) {
-                    container.innerHTML = '<div class="empty-cart"><p>😕 Корзина пуста</p><a href="catalog.html">Перейти в каталог</a></div>';
-                    return;
-                }
-                let html = '<div class="cart-container">';
-                items.forEach(p => {
-                    const bgStyle = p.imgFile ? `background-image:url('imges/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
-                    const priceDisplay = p.priceStr || (p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : '');
-                    html += `
-                        <div class="cart-item" data-id="${p.id}">
-                            <div class="cart-item-image" style="${bgStyle}">${!p.imgFile ? (p.imgLabel || p.brand || '🔫') : ''}</div>
-                            <div class="cart-item-info">
-                                <h3>${escapeHtml(p.name)}</h3>
-                                <p>${escapeHtml(p.brand || '')}</p>
-                            </div>
-                            <div class="cart-item-price">${escapeHtml(priceDisplay)}</div>
-                            <div><button class="remove-item" data-id="${p.id}">🗑️ Удалить</button></div>
-                        </div>
-                    `;
-                });
-                const total = items.reduce((sum, p) => sum + (p.price || 0), 0);
-                html += `
-                    <div class="cart-summary">
-                        <div class="total-price">Итого: ${total.toLocaleString('ru-RU')} ₽</div>
-                        <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
-                    </div>
-                </div>`;
-                container.innerHTML = html;
-                document.querySelectorAll('.remove-item').forEach(btn => {
-                    btn.addEventListener('click', (e) => removeFromCart(parseInt(btn.dataset.id)));
-                });
-                document.getElementById('checkoutBtn')?.addEventListener('click', () => alert('Функция оформления заказа в разработке.'));
-            }
-            function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
+  const { loadProducts, getArray, setArray, syncCounters, showToast, escapeHtml } = Shop;
+  let productsData = loadProducts();
 
-            // Поиск
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            function performSearch() {
-                const query = searchInput.value.trim();
-                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
-            }
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+  console.log('Корзина: товаров в каталоге', productsData.length);
+  console.log('IDs в корзине', getArray(Shop.STORAGE_KEYS.CART));
 
-            document.getElementById('logoBtn').addEventListener('click', () => window.location.href = 'index.html');
+  function removeFromCart(id) {
+    const cart = getArray(Shop.STORAGE_KEYS.CART).filter(item => item !== id);
+    setArray(Shop.STORAGE_KEYS.CART, cart);
+    renderCart();
+    showToast('Товар удалён из корзины');
+  }
 
-            syncCounters();
-            renderCart();
-        })();
-    </script>
+  function renderCart() {
+    const container = document.getElementById('cartContent');
+    if (!container) return;
+
+    const cartIds = getArray(Shop.STORAGE_KEYS.CART);
+    // Защита: если каталог пуст, но в корзине есть ID – пробуем перезагрузить каталог
+    if ((!productsData || productsData.length === 0) && cartIds.length > 0) {
+      console.warn('Каталог пуст, перезагружаем данные...');
+      productsData = loadProducts(); // повторная попытка
+    }
+
+    const items = productsData.filter(p => cartIds.includes(p.id));
+
+    if (!items.length) {
+      container.innerHTML = '<div class="empty-cart"><p>😕 Корзина пуста</p><a href="catalog.html">Перейти в каталог</a></div>';
+      return;
+    }
+
+    let html = '<div class="cart-container">';
+    items.forEach(p => {
+      const bgStyle = p.imgFile ? `background-image:url('images/${p.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;` : '';
+      const priceDisplay = p.priceStr || (p.price ? p.price.toLocaleString('ru-RU') + ' ₽' : '');
+      html += `
+        <div class="cart-item" data-id="${p.id}">
+          <div class="cart-item-image" style="${bgStyle}">${!p.imgFile ? (escapeHtml(p.imgLabel) || escapeHtml(p.brand) || '🔫') : ''}</div>
+          <div class="cart-item-info">
+            <h3>${escapeHtml(p.name)}</h3>
+            <p>${escapeHtml(p.brand || '')}</p>
+          </div>
+          <div class="cart-item-price">${escapeHtml(priceDisplay)}</div>
+          <div><button class="remove-item" data-id="${p.id}">🗑️ Удалить</button></div>
+        </div>
+      `;
+    });
+
+    const total = items.reduce((sum, p) => sum + (p.price || 0), 0);
+    html += `
+      <div class="cart-summary">
+        <div class="total-price">Итого: ${total.toLocaleString('ru-RU')} ₽</div>
+        <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
+      </div>
+    </div>`;
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', () => removeFromCart(parseInt(btn.dataset.id)));
+    });
+
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', () => {
+        if (confirm('Оформить заказ? (Демо-режим)')) {
+          setArray(Shop.STORAGE_KEYS.CART, []);
+          renderCart();
+          showToast('✅ Заказ оформлен! Спасибо за покупку.', 4000);
+        }
+      });
+    }
+  }
+
+  // Инициализация общих элементов
+  Shop.initHeaderSearch();
+  Shop.initLogo();
+  syncCounters();
+  renderCart();
+})();
+</script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Контакты · Охота и Рыбалка</title>
-    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="icon" type="image/png" href="images/title.png">
     <!-- Общий CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -33,7 +33,7 @@
         </div>
     </header>
 
-    <main class="main-content" style="grid-template-columns: 1fr; max-width: 1200px; margin: 0 auto; width: 100%;">
+    <main class="main-content">
         <section class="contacts-hero">
             <h1>Свяжитесь с нами</h1>
             <p>Мы всегда рады ответить на ваши вопросы и помочь с выбором снаряжения</p>
@@ -174,23 +174,13 @@
         </div>
     </footer>
 
-    <!-- Общий JS -->
-    <script src="js/main.js"></script>
-    <script>
-        (function() {
-            // Поиск -> каталог
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            function performSearch() {
-                const query = searchInput.value.trim();
-                window.location.href = query ? `catalog.html?search=${encodeURIComponent(query)}` : 'catalog.html';
-            }
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-            
-            const logo = document.getElementById('logoBtn');
-            if (logo) logo.addEventListener('click', () => window.location.href = 'index.html');
-        })();
-    </script>
+<script src="js/common.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        Shop.initHeaderSearch();
+        Shop.initLogo();
+        Shop.syncCounters();
+    });
+</script>
 </body>
 </html>

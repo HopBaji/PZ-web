@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Возврат · Охота и Рыбалка</title>
-    <link rel="icon" type="image/png" href="imges/title.png">
+    <link rel="icon" type="image/png" href="images/title.png">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -33,7 +33,7 @@
     </header>
 
     <main class="main-content" style="max-width:1200px; margin:0 auto; width:100%;">
-        <section class="about-hero" style="background: linear-gradient(rgba(30,42,46,0.7),rgba(30,42,46,0.7)),url('imges/news-bg.jpg') center/cover;">
+        <section class="about-hero" style="background: linear-gradient(rgba(30,42,46,0.7),rgba(30,42,46,0.7)),url('images/news-bg.jpg') center/cover;">
             <h1>Возврат товара</h1>
             <p>Условия и порядок возврата</p>
         </section>
@@ -78,21 +78,11 @@
     </footer>
 
     <script src="js/content.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-        // Обработка неактивных ссылок
-        document.querySelectorAll('.inactive-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.dataset.page || 'Эта';
-                const toast = document.getElementById('toast');
-                if (toast) {
-                    toast.textContent = `📄 ${page} — страница в разработке`;
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 2000);
-                }
-            });
-        });
-    </script>
+<script src="js/common.js"></script>
+<script>
+    Shop.initHeaderSearch();
+    Shop.initLogo();
+    Shop.syncCounters();
+</script>
 </body>
 </html>
