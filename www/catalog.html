@@ -151,13 +151,24 @@
 
             function applyFilters() {
                 let filtered = productsData.filter(p => {
-                    if (filters.searchQuery && !p.name.toLowerCase().includes(filters.searchQuery.toLowerCase())) return false;
-                    if (filters.brands.size && !filters.brands.has(p.brand)) return false;
-                    if (filters.categories.size && !filters.categories.has(p.category)) return false;
-                    const price = p.price || 0;
-                    if (price < filters.priceMin || price > filters.priceMax) return false;
-                    return true;
-                });
+    // Поиск
+    if (filters.searchQuery) {
+        const q = filters.searchQuery.toLowerCase();
+        const inName = p.name.toLowerCase().includes(q);
+        const inBrand = (p.brand && p.brand.toLowerCase().includes(q));
+        const inDesc = (p.desc && p.desc.toLowerCase().includes(q));
+        if (!inName && !inBrand && !inDesc) return false;
+    }
+    // Бренды
+    if (filters.brands.size && !filters.brands.has(p.brand)) return false;
+    // Категории
+    if (filters.categories.size && !filters.categories.has(p.category)) return false;
+    // Цена
+    const price = p.price || 0;
+    if (price < filters.priceMin || price > filters.priceMax) return false;
+    
+    return true;
+});
 
                 // Сортировка
                 if (currentSort === 'priceAsc') filtered.sort((a,b) => (a.price||0) - (b.price||0));

@@ -329,65 +329,88 @@ const weaponsCatalog = [
     "imgLabel": "Wingate",
     "imgFile": "Wingate FF130XH.jpg",
     "desc": "Wingate Feeder — серия универсальных фидерных удилищ от компании Westhill. В основе конструкции бланков лежит качественный среднемодульный графит. Удилища серии комплектуются кольцами SMT — PowerOx FD. Бланки имеют быстрый строй, что положительно сказывается на точности забросов. Wingate можно охарактеризовать как универсальный рабочий инструмент для ловли небольшой рыбы и крупного карпа на водоемах среднего размера. В равной степени придется по душе новичкам и более опытным рыболовам."
-  },
-  {
-    "id": 31,
-    "name": "12/70 7-мм картечь",
-    "brand": "12x70",
-    "category": "Боеприпасы",
-    "price": 32,
-    "priceStr": "32 ₽",
-    "imgLabel": "7мм картечь",
-    "imgFile": "12x70_7mm_buckshot.webp",
-    "desc": "Стандартный патрон с картечью 8 мм для ружей 12-го калибра."
-  },
-  {
-    "id": 32,
-    "name": "12/70 8.5-мм картечь «Магнум»",
-    "brand": "12x70",
-    "category": "Боеприпасы",
-    "price": 65,
-    "priceStr": "65 ₽",
-    "imgLabel": "Магнум",
-    "imgFile": "12x70_magnum_buckshot.webp",
-    "desc": "Мощный патрон с картечью 8.5 мм, обладающий высокой останавливающей способностью."
-  },
-  {
-    "id": 33,
-    "name": "7.62x54R SP BT",
-    "brand": "7.62x54R",
-    "category": "Боеприпасы",
-    "price": 280,
-    "priceStr": "280 ₽",
-    "imgLabel": "SP BT",
-    "imgFile": "762x54R_SP_BT.webp",
-    "desc": "Охотничий патрон с экспансивной пулей, обеспечивающий высокое останавливающее действие."
-  },
-  {
-    "id": 34,
-    "name": "7.62x39 HP",
-    "brand": "7.62x39",
-    "category": "Боеприпасы",
-    "price": 64,
-    "priceStr": "64 ₽",
-    "imgLabel": "HP",
-    "imgFile": "762x39_HP.webp",
-    "desc": "Охотничий патрон с экспансивной пулей, наносящей высокий урон по незащищённым целям."
-  },
-  {
-    "id": 35,
-    "name": ".366 ТКМ ЭКО",
-    "brand": ".366 ТКМ",
-    "category": "Боеприпасы",
-    "price": 59,
-    "priceStr": "59 ₽",
-    "imgLabel": "ЭКО",
-    "imgFile": "366_TKM_EKO.webp",
-    "desc": "Бюджетный охотничий патрон с цельнометаллической цинковой пулей."
   }
 ];
-const promosData = [];
-const newsData = [];
-const carouselSlides = [];
-const popularProducts = [];
+const promosData = [
+  {
+    "id": "promo1",
+    "title": "Скидки 10%",
+    "desc": "При подтверждении заказа назовите кодовое слово: \"КФУ\"",
+    "bg": "#c49a3f",
+    "btnText": "Подробнее",
+    "link": "/catalog.html"
+  }
+];
+const newsData = [
+  {
+    "id": "news1",
+    "date": "2026-04-21",
+    "title": "Мы открылись",
+    "text": "Мы открылись"
+  },
+  {
+    "id": "news2",
+    "date": "2026-04-21",
+    "title": "Скидки",
+    "text": "Скидки на все 10%"
+  },
+  {
+    "id": "news3",
+    "date": "2026-04-21",
+    "title": "Новое поступления",
+    "text": "Новое поступления. Уже сегодня!"
+  }
+];
+const carouselSlides = [
+  {
+    "id": "slide1",
+    "title": "Новое поступление",
+    "subtitle": "",
+    "bg": "#ff8080",
+    "btnText": "Смотреть",
+    "link": "catalog.html"
+  },
+  {
+    "id": "slide2",
+    "title": "Мы открылись",
+    "subtitle": "",
+    "bg": "#ffff80",
+    "btnText": "Смотреть",
+    "link": "index.html"
+  },
+  {
+    "id": "slide3",
+    "title": "Скидки 10% ",
+    "subtitle": "Смотреть описание акции",
+    "bg": "#80ff80",
+    "btnText": "Смотреть",
+    "link": "catalog.html"
+  }
+];
+const popularProducts = [
+  {
+    "productId": 5,
+    "priority": 1
+  },
+  {
+    "productId": 6,
+    "priority": 1
+  },
+  {
+    "productId": 10,
+    "priority": 1
+  },
+  {
+    "productId": 9,
+    "priority": 1
+  },
+  {
+    "productId": 16,
+    "priority": 1
+  },
+  {
+    "productId": 30,
+    "priority": 1
+  }
+];
 if (typeof window !== 'undefined') { window.shopContent = { weaponsCatalog, promosData, newsData, carouselSlides, popularProducts }; }

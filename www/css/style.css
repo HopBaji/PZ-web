@@ -1013,6 +1013,11 @@ textarea:focus-visible {
   border-radius: var(--radius-lg);
   padding: 28px;
 }
+
+.cart-item-quantity { display: flex; align-items: center; gap: 10px; }
+.qty-btn { background: #f0ede8; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+.clear-cart-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 40px; margin-left: 10px; cursor: pointer; }
+
 .cart-item {
   display: grid;
   grid-template-columns: 100px 1fr auto auto;
@@ -1229,4 +1234,20 @@ textarea:focus-visible {
   background: var(--color-dark) !important;
   color: white !important;
   border-color: var(--color-dark) !important;
+}
+
+.card-btn.active-fav {
+    background: #ff4d4d;
+    border-color: #ff4d4d;
+    color: white;
+}
+.card-btn.active-compare {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: white;
+}
+.card-btn.active-fav:hover,
+.card-btn.active-compare:hover {
+    filter: brightness(0.9);
+    transform: translateY(-2px);
 }
