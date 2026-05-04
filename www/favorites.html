@@ -131,9 +131,6 @@
   const { loadProducts, getArray, setArray, syncCounters, showToast, escapeHtml } = Shop;
   let productsData = loadProducts();
 
-  console.log('Избранное: товаров в каталоге', productsData.length);
-  console.log('IDs в избранном', getArray(Shop.STORAGE_KEYS.FAVORITE));
-
   function removeFromFav(id) {
     let fav = getArray(Shop.STORAGE_KEYS.FAVORITE);
     fav = fav.filter(item => item !== id);
@@ -148,30 +145,45 @@
 
     let ids = getArray(Shop.STORAGE_KEYS.FAVORITE);
     if ((!productsData || productsData.length === 0) && ids.length > 0) {
-      productsData = loadProducts();
+        productsData = loadProducts();
     }
 
-    const items = productsData.filter(p => ids.includes(p.id));
+    const available = productsData.filter(p => ids.includes(p.id));
+    const unavailableIds = ids.filter(id => !productsData.some(p => p.id === id));
 
-    if (!items.length) {
-      container.innerHTML = '<div class="empty-favorites"><p>😕 Избранное пусто</p><a href="catalog.html">Перейти в каталог</a></div>';
-      return;
+    if (!available.length && !unavailableIds.length) {
+        container.innerHTML = '<div class="empty-favorites"><p>😕 Избранное пусто</p><a href="catalog.html">Перейти в каталог</a></div>';
+        return;
     }
 
     let html = '<div class="favorites-grid">';
-    items.forEach(p => {
-      const cardHtml = Shop.renderProductCard(p);
-      // добавляем кнопку удаления
-      const modifiedCard = cardHtml.replace('</div>', `<button class="remove-fav" data-id="${p.id}">❌ Удалить</button></div>`);
-      html += modifiedCard;
+
+    // Недоступные товары
+    unavailableIds.forEach(missingId => {
+        html += `
+            <div class="product-card" style="border:2px dashed #e74c3c; background:#fff5f5;">
+                <div class="product-image" style="background:#eee;">🗑️</div>
+                <div class="product-title" style="color:red;">Товар (ID: ${missingId}) недоступен</div>
+                <div class="product-brand">Удалён из каталога</div>
+                <div class="product-price">—</div>
+                <button class="remove-fav" data-id="${missingId}" style="margin-top:auto;">❌ Удалить</button>
+            </div>
+        `;
     });
+
+    // Доступные товары
+    available.forEach(p => {
+        const cardHtml = Shop.renderProductCard(p);
+        const modifiedCard = cardHtml.replace('</div>', `<button class="remove-fav" data-id="${p.id}">❌ Удалить</button></div>`);
+        html += modifiedCard;
+    });
+
     html += '</div>';
     container.innerHTML = html;
 
     container.querySelectorAll('.remove-fav').forEach(btn => {
-      btn.addEventListener('click', () => removeFromFav(parseInt(btn.dataset.id)));
+        btn.addEventListener('click', () => removeFromFav(parseInt(btn.dataset.id)));
     });
-    // Прикрепляем стандартные обработчики для кнопок info, compare, cart
     Shop.attachProductCardListeners(container, productsData);
   }
 

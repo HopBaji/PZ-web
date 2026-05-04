@@ -110,6 +110,21 @@
             const itemsPerPage = 12;
             let filteredProducts = [];
 
+            // Переменные для кеширования
+            let lastFilters = {};
+            let cachedFiltered = null;
+
+            // Автообновление при изменениях в другой вкладке
+            if (typeof Shop.onStorageUpdate === 'function') {
+                Shop.onStorageUpdate(() => {
+                    productsData = Shop.loadProducts();
+                    // сбрасываем кеш, чтобы пересчиталось
+                    lastFilters = {};
+                    cachedFiltered = null;
+                    applyFilters();
+                });
+            }
+
             // Извлечение параметра поиска из URL
             const urlParams = new URLSearchParams(window.location.search);
             const searchParam = urlParams.get('search') || '';
@@ -149,33 +164,42 @@
                 });
             }
 
+            // Единая функция applyFilters с кешированием
             function applyFilters() {
-                let filtered = productsData.filter(p => {
-    // Поиск
-    if (filters.searchQuery) {
-        const q = filters.searchQuery.toLowerCase();
-        const inName = p.name.toLowerCase().includes(q);
-        const inBrand = (p.brand && p.brand.toLowerCase().includes(q));
-        const inDesc = (p.desc && p.desc.toLowerCase().includes(q));
-        if (!inName && !inBrand && !inDesc) return false;
-    }
-    // Бренды
-    if (filters.brands.size && !filters.brands.has(p.brand)) return false;
-    // Категории
-    if (filters.categories.size && !filters.categories.has(p.category)) return false;
-    // Цена
-    const price = p.price || 0;
-    if (price < filters.priceMin || price > filters.priceMax) return false;
-    
-    return true;
-});
+                const filterKey = JSON.stringify({
+                    brands: [...filters.brands].sort(),
+                    categories: [...filters.categories].sort(),
+                    priceMin: filters.priceMin,
+                    priceMax: filters.priceMax,
+                    searchQuery: filters.searchQuery,
+                    sort: currentSort
+                });
 
-                // Сортировка
-                if (currentSort === 'priceAsc') filtered.sort((a,b) => (a.price||0) - (b.price||0));
-                else if (currentSort === 'priceDesc') filtered.sort((a,b) => (b.price||0) - (a.price||0));
-                else if (currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+                if (filterKey === lastFilters.key && cachedFiltered) {
+                    filteredProducts = cachedFiltered;
+                } else {
+                    let filtered = productsData.filter(p => {
+                        if (filters.searchQuery) {
+                            const q = filters.searchQuery.toLowerCase();
+                            if (!p.name.toLowerCase().includes(q) &&
+                                !(p.brand && p.brand.toLowerCase().includes(q)) &&
+                                !(p.desc && p.desc.toLowerCase().includes(q))) return false;
+                        }
+                        if (filters.brands.size && !filters.brands.has(p.brand)) return false;
+                        if (filters.categories.size && !filters.categories.has(p.category)) return false;
+                        const price = p.price || 0;
+                        if (price < filters.priceMin || price > filters.priceMax) return false;
+                        return true;
+                    });
 
-                filteredProducts = filtered;
+                    if (currentSort === 'priceAsc') filtered.sort((a,b) => (a.price||0) - (b.price||0));
+                    else if (currentSort === 'priceDesc') filtered.sort((a,b) => (b.price||0) - (a.price||0));
+                    else if (currentSort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+                    filteredProducts = filtered;
+                    cachedFiltered = filtered;
+                    lastFilters = { key: filterKey };
+                }
                 currentPage = 1;
                 renderProducts();
             }
@@ -196,12 +220,9 @@
                     return;
                 }
 
-                // Генерация карточек через централизованную функцию
                 container.innerHTML = pageProducts.map(p => Shop.renderProductCard(p)).join('');
-                // Привязываем обработчики кликов
                 Shop.attachProductCardListeners(container, productsData);
 
-                // Пагинация
                 let pagesHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
                     pagesHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
@@ -217,7 +238,6 @@
                 resultInfo.textContent = `Показано ${pageProducts.length} из ${total} товаров`;
             }
 
-            // Обработчики сброса фильтров
             document.getElementById('resetBrands').addEventListener('click', () => {
                 filters.brands.clear();
                 renderFilterCheckboxes();
@@ -233,7 +253,6 @@
                 filters.categories.clear();
                 filters.searchQuery = '';
                 document.getElementById('searchInput').value = '';
-                // Сброс цены
                 document.getElementById('priceMin').value = '';
                 document.getElementById('priceMax').value = '';
                 filters.priceMin = 0;
@@ -255,7 +274,6 @@
                 applyFilters();
             });
 
-            // Переключение вида сетки
             const gridContainer = document.getElementById('productsContainer');
             document.querySelectorAll('.view-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -267,7 +285,6 @@
                 });
             });
 
-            // Инициализация поиска в шапке
             Shop.initHeaderSearch();
             Shop.initLogo();
             syncCounters();

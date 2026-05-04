@@ -188,7 +188,29 @@
             let total = 0;
             for (const item of cartItems) {
                 const product = products.find(p => p.id === item.id);
-                if (!product) continue;
+                if (!product) {
+                    // Товар удалён из каталога, но ещё в корзине
+                    html += `
+                        <div class="cart-item">
+                            <div class="cart-item-image" style="background:#eee;">🗑️</div>
+                            <div class="cart-item-info">
+                                <h3 style="color:red;">Товар (ID: ${item.id}) недоступен</h3>
+                                <p>Этот товар был удалён из каталога.</p>
+                            </div>
+                            <div class="cart-item-price">—</div>
+                            <div class="cart-item-quantity">
+                                <button class="qty-btn" data-id="${item.id}" data-delta="-1" disabled>−</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" data-id="${item.id}" data-delta="1" disabled>+</button>
+                            </div>
+                            <div class="cart-item-total">—</div>
+                            <div><button class="remove-item" data-id="${item.id}">🗑️ Удалить</button></div>
+                        </div>
+                    `;
+                    continue;
+                }
+
+                // НОРМАЛЬНЫЙ ТОВАР (добавлен недостающий код)
                 const price = product.price || 0;
                 const itemTotal = price * item.quantity;
                 total += itemTotal;
@@ -242,6 +264,12 @@
                 }
             });
             document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+                const unavailable = cartItems.filter(item => !products.some(p => p.id === item.id));
+                if (unavailable.length > 0) {
+                    const ids = unavailable.map(i => i.id).join(', ');
+                    alert(`Некоторые товары (ID: ${ids}) больше недоступны. Удалите их из корзины перед оформлением.`);
+                    return;
+                }
                 if (confirm('Оформить заказ?')) {
                     const order = {
                         id: Date.now(),

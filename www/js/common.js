@@ -3,6 +3,7 @@
 
 (function(global) {
   'use strict';
+  const storageCallbacks = [];
 
   // ---------- КЛЮЧИ ----------
   const STORAGE_KEYS = {
@@ -64,7 +65,6 @@
     if (cart.length && typeof cart[0] === 'object' && cart[0].quantity !== undefined) {
       return cart.reduce((sum, item) => sum + item.quantity, 0);
     } else {
-      // старая версия (массив ID) – совместимость
       return cart.length;
     }
   }
@@ -92,7 +92,7 @@
     setTimeout(() => toast.classList.remove('show'), duration);
   }
 
-  // ---------- ДОБАВЛЕНИЕ / УДАЛЕНИЕ В СПИСКИ (переключение) ----------
+  // ---------- ДОБАВЛЕНИЕ / УДАЛЕНИЕ В СПИСКИ ----------
   function addToCompare(id, name) {
     let arr = getArray(STORAGE_KEYS.COMPARE);
     if (arr.includes(id)) {
@@ -127,7 +127,6 @@
 
   function addToCart(id, name) {
     let cart = getArray(STORAGE_KEYS.CART);
-    // если корзина хранит ID (старый формат) – конвертируем
     if (cart.length > 0 && typeof cart[0] === 'number') {
       cart = cart.map(id => ({ id, quantity: 1 }));
     }
@@ -161,7 +160,6 @@
     showToast('🧹 Корзина полностью очищена');
   }
 
-  // ---------- УДАЛЕНИЕ ИЗ СПИСКОВ (по ID) ----------
   function removeFromCompare(id) {
     let arr = getArray(STORAGE_KEYS.COMPARE).filter(item => item !== id);
     setArray(STORAGE_KEYS.COMPARE, arr);
@@ -320,6 +318,14 @@
     initHeaderSearch,
     initLogo,
     renderProductCard,
-    attachProductCardListeners
+    attachProductCardListeners,
+    onStorageUpdate: function(callback) { storageCallbacks.push(callback); }
   };
+
+  window.addEventListener('storage', (e) => {
+    if (Object.values(STORAGE_KEYS).includes(e.key)) {
+      syncCounters();
+      storageCallbacks.forEach(cb => cb(e));
+    }
+  });
 })(window);

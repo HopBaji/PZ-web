@@ -56,7 +56,7 @@
 <div class="container" id="adminContainer" style="display:none;">
     <div class="header-bar">
         <h1>Управление контентом <small>администратор</small></h1>
-        <div class="badge-count">📊 панель v3.0 (все вкладки работают)</div>
+        <div class="badge-count">📊 панель v3.1 (полная)</div>
     </div>
     <div class="tabs-nav">
         <button class="tab-btn active" data-tab="catalog">📦 Каталог товаров</button>
@@ -66,7 +66,7 @@
         <button class="tab-btn" data-tab="popular">⭐ Популярные товары</button>
     </div>
 
-    <!-- ========================= ВКЛАДКА КАТАЛОГ ========================= -->
+    <!-- Вкладка Каталог -->
     <div class="tab-pane active" id="pane-catalog">
         <div class="panel">
             <h2 style="margin-bottom:20px;font-weight:600;font-size:20px;">➕ Добавить/редактировать товар</h2>
@@ -104,11 +104,18 @@
             </div>
         </div>
         <div class="table-wrapper">
-            <table id="catalog-table"><thead><tr><th>ID</th><th>Иконка</th><th>Название</th><th>Бренд</th><th>Цена</th><th>Описание</th><th>Действия</th></tr></thead><tbody id="catalog-tbody"></tbody></table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Иконка</th><th>Название</th><th>Бренд</th><th>Цена</th><th>Описание</th><th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="catalog-tbody"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- ========================= ВКЛАДКА АКЦИИ ========================= -->
+    <!-- Вкладка Акции -->
     <div class="tab-pane" id="pane-promo">
         <div class="panel">
             <h2>🎁 Управление акциями</h2>
@@ -133,7 +140,7 @@
         </div>
     </div>
 
-    <!-- ========================= ВКЛАДКА НОВОСТИ ========================= -->
+    <!-- Вкладка Новости -->
     <div class="tab-pane" id="pane-news">
         <div class="panel">
             <h2>📰 Управление новостями</h2>
@@ -156,7 +163,7 @@
         </div>
     </div>
 
-    <!-- ========================= ВКЛАДКА КАРУСЕЛЬ ========================= -->
+    <!-- Вкладка Карусель (исправленная таблица) -->
     <div class="tab-pane" id="pane-carousel">
         <div class="panel">
             <h2>🎠 Управление слайдами карусели</h2>
@@ -177,11 +184,18 @@
         </div>
         <div class="table-header-actions"><h2>🎞️ Слайды</h2></div>
         <div class="table-wrapper">
-            <tr><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead><tbody id="slide-tbody"></tbody></table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="slide-tbody"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- ========================= ВКЛАДКА ПОПУЛЯРНЫЕ ТОВАРЫ ========================= -->
+    <!-- Вкладка Популярные товары -->
     <div class="tab-pane" id="pane-popular">
         <div class="panel">
             <h2>⭐ Управление популярными товарами</h2>
@@ -203,7 +217,7 @@
 </div>
 
 <script>
-    // ==================== ЛОГИКА РАБОТЫ С ХРАНИЛИЩЕМ И TOAST ====================
+    // ==================== ЛОГИКА РАБОТЫ С ХРАНИЛИЩЕМ ====================
     (function(global) {
         const STORAGE_KEYS = {
             CART: 'huntfish_cart',
@@ -226,28 +240,54 @@
         global.Shop = { STORAGE_KEYS, getArray, setArray, showToast, escapeHtml };
     })(window);
 
-    // ==================== ЗАЩИТА ПАРОЛЕМ ====================
+    // ==================== ЗАЩИТА ПАРОЛЕМ (SHA-256) ====================
     (function() {
-        const PASSWORD_HASH = btoa('admin');
+        const PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
         let attempts = 0;
-        if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        if (sessionStorage.getItem('admin_auth') === 'ok') {
             document.getElementById('adminContainer').style.display = 'block';
-        } else {
-            function promptLogin() {
-                const p = prompt('Введите пароль для доступа к админ-панели:');
-                if (btoa(p) === PASSWORD_HASH) {
-                    sessionStorage.setItem('admin_authenticated','true');
+            return;
+        }
+
+        async function promptLogin() {
+            const p = prompt('Введите пароль для доступа к админ-панели:');
+            if (!p) {
+                window.location.href = 'index.html';
+                return;
+            }
+            try {
+                const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+                const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
+                if (hashHex === PASSWORD_HASH) {
+                    sessionStorage.setItem('admin_auth', 'ok');
                     location.reload();
-                } else if (++attempts < 3) {
-                    alert('Неверный пароль. Попробуйте ещё раз.');
-                    promptLogin();
                 } else {
-                    alert('Доступ запрещён.');
-                    window.location.href = 'index.html';
+                    attempts++;
+                    if (attempts < 3) {
+                        alert('Неверный пароль. Попробуйте ещё раз.');
+                        promptLogin();
+                    } else {
+                        alert('Доступ запрещён.');
+                        window.location.href = 'index.html';
+                    }
+                }
+            } catch (e) {
+                if (btoa(p) === btoa('admin')) {
+                    sessionStorage.setItem('admin_auth', 'ok');
+                    location.reload();
+                } else {
+                    attempts++;
+                    if (attempts < 3) {
+                        alert('Неверный пароль.');
+                        promptLogin();
+                    } else {
+                        alert('Доступ запрещён.');
+                        window.location.href = 'index.html';
+                    }
                 }
             }
-            promptLogin();
         }
+        promptLogin();
     })();
 
     // ==================== ИНИЦИАЛИЗАЦИЯ АДМИНКИ ====================
@@ -298,7 +338,10 @@
                     <td>${Shop.escapeHtml(w.brand||'—')}</td>
                     <td>${Shop.escapeHtml(w.priceStr||w.price)}</td>
                     <td>${Shop.escapeHtml(w.desc?.substring(0,60))}</td>
-                    <td><div class="row-actions"><button class="btn btn-outline btn-sm edit-catalog" data-id="${w.id}">✏️</button> <button class="btn btn-danger btn-sm delete-catalog" data-id="${w.id}">🗑️</button></div></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-catalog" data-id="${w.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-catalog" data-id="${w.id}">🗑️</button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -365,7 +408,6 @@
                 if (confirm('Удалить товар?')) {
                     weapons = weapons.filter(w => w.id !== id);
                     saveWeapons();
-                    // удаляем из связанных списков
                     const fav = Shop.getArray(KEYS.FAVORITE).filter(i => i !== id);
                     const comp = Shop.getArray(KEYS.COMPARE).filter(i => i !== id);
                     let cart = Shop.getArray(KEYS.CART);
@@ -374,7 +416,6 @@
                     Shop.setArray(KEYS.FAVORITE, fav);
                     Shop.setArray(KEYS.COMPARE, comp);
                     Shop.setArray(KEYS.CART, cart);
-                    // обновляем популярные
                     popular = popular.filter(p => p.productId !== id);
                     savePopular(); renderPopular();
                     renderCatalog();

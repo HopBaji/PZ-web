@@ -374,7 +374,7 @@ const carouselSlides = [
     "id": "slide2",
     "title": "Мы открылись",
     "subtitle": "",
-    "bg": "#ffff80",
+    "bg": "#ffca5b",
     "btnText": "Смотреть",
     "link": "index.html"
   },
@@ -382,7 +382,7 @@ const carouselSlides = [
     "id": "slide3",
     "title": "Скидки 10% ",
     "subtitle": "Смотреть описание акции",
-    "bg": "#80ff80",
+    "bg": "#20b9c1",
     "btnText": "Смотреть",
     "link": "catalog.html"
   }

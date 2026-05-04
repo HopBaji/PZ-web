@@ -49,6 +49,15 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+/* ФОН САЙТА – принудительное применение */
+body {
+  background-image: url('/images/site-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-color: var(--color-bg-body) !important;
+}
 
 /* Улучшенная доступность */
 a:focus-visible,
@@ -1251,3 +1260,4 @@ textarea:focus-visible {
     filter: brightness(0.9);
     transform: translateY(-2px);
 }
+
