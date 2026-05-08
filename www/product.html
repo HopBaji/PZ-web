@@ -24,23 +24,24 @@
             align-items: center;
         }
         .main-image {
-            width: 100%;
-            max-width: 500px;
-            height: 400px;
-            background-color: #4e4f4a;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            border-radius: var(--radius-md);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    background-color: white;
+    border: 2px solid var(--color-gold);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: var(--radius-md);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-dark); /* чтобы текст на белом фоне был виден */
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
         .product-info {
             display: flex;
             flex-direction: column;
@@ -205,7 +206,22 @@
                 : `background:#b8aa92;`;
             const imageText = !product.imgFile ? (product.imgLabel || product.brand || '🔫') : '';
             const priceDisplay = product.priceStr || (product.price ? product.price.toLocaleString('ru-RU') + ' ₽' : '');
+                    const promos = Shop.loadActivePromos();
+        const discount = Shop.getDiscountForProduct(product, promos);
+        const originalPrice = product.price || 0;
+        const discountedPrice = discount > 0 ? Shop.getDiscountedPrice(product, promos) : originalPrice;
 
+        let priceHtml = '';
+            if (discount > 0) {
+                const originalStr = product.priceStr || originalPrice.toLocaleString('ru-RU') + ' ₽';
+                const discountedStr = discountedPrice.toLocaleString('ru-RU') + ' ₽';
+                priceHtml = `<span class="old-price">${originalStr}</span>
+                             <span class="new-price" style="font-size:28px;">${discountedStr}</span>`;
+            } else {
+                priceHtml = product.priceStr || originalPrice.toLocaleString('ru-RU') + ' ₽';
+            }
+
+        
             container.innerHTML = `
                 <div class="product-detail-container">
                     <div class="product-gallery">
@@ -217,7 +233,7 @@
                             <span>${Shop.escapeHtml(product.brand || '')}</span>
                             <span>${Shop.escapeHtml(product.category || '')}</span>
                         </div>
-                        <div class="product-price-large">${Shop.escapeHtml(priceDisplay)}</div>
+                        <div class="product-price-large">${priceHtml}</div>
                         <p class="product-description">${Shop.escapeHtml(product.desc || '')}</p>
                         <div class="action-buttons">
                             <button class="btn-large btn-primary-large" id="addToCartBtn">🛒 В корзину</button>

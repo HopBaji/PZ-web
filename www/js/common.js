@@ -230,24 +230,41 @@
   }
 
   // ========== РЕНДЕРИНГ КАРТОЧЕК ==========
-  function renderProductCard(product) {
+    function renderProductCard(product) {
+    const promos = loadActivePromos();
+    const discount = getDiscountForProduct(product, promos);
+    const originalPrice = product.price || 0;
+    const discountedPrice = discount > 0 ? getDiscountedPrice(product, promos) : originalPrice;
+
     const bgStyle = product.imgFile
       ? `background-image:url('images/${product.imgFile}');background-size:contain;background-repeat:no-repeat;background-position:center;`
       : '';
     const symbol = !product.imgFile ? (escapeHtml(product.imgLabel) || escapeHtml(product.brand) || '🔫') : '';
-    const priceDisplay = product.priceStr || (product.price ? product.price.toLocaleString('ru-RU') + ' ₽' : '');
+
+    let priceHtml = '';
+    if (discount > 0) {
+      const originalStr = product.priceStr || originalPrice.toLocaleString('ru-RU') + ' ₽';
+      const discountedStr = discountedPrice.toLocaleString('ru-RU') + ' ₽';
+      priceHtml = `<span class="old-price">${originalStr}</span> <span class="new-price">${discountedStr}</span>`;
+    } else {
+      const priceDisplay = product.priceStr || originalPrice.toLocaleString('ru-RU') + ' ₽';
+      priceHtml = `<span>${escapeHtml(priceDisplay)}</span>`;
+    }
+
     const favorites = getArray(STORAGE_KEYS.FAVORITE);
     const compare = getArray(STORAGE_KEYS.COMPARE);
     const isInFav = favorites.includes(product.id);
     const isInCompare = compare.includes(product.id);
     const favClass = isInFav ? 'active-fav' : '';
     const compareClass = isInCompare ? 'active-compare' : '';
+
     return `
       <div class="product-card" data-id="${product.id}">
+        ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
         <div class="product-image" style="${bgStyle}">${symbol}</div>
         <div class="product-title">${escapeHtml(product.name)}</div>
         <div class="product-brand">${escapeHtml(product.brand || '')}</div>
-        <div class="product-price">${escapeHtml(priceDisplay)}</div>
+        <div class="product-price">${priceHtml}</div>
         <div class="card-actions">
           <button class="card-btn" data-action="info">ℹ️</button>
           <button class="card-btn ${compareClass}" data-action="compare">⚖️</button>
@@ -295,6 +312,42 @@
     });
   }
 
+    // ---------- РАБОТА СО СКИДКАМИ ----------
+  let _promosCache = null;
+
+  function loadActivePromos() {
+    if (_promosCache) return _promosCache;
+    const raw = getArray(STORAGE_KEYS.PROMOS);
+    // Оставляем только объекты нового формата (с полем discountPercent)
+    _promosCache = raw.filter(p => p.discountPercent !== undefined);
+    return _promosCache;
+  }
+
+  function clearPromosCache() {
+    _promosCache = null;
+  }
+
+  function getDiscountForProduct(product, promos) {
+    if (!promos) promos = loadActivePromos();
+    for (const promo of promos) {
+      if (promo.type === 'category' && product.category === promo.value) {
+        return promo.discountPercent;
+      }
+      if (promo.type === 'items' && Array.isArray(promo.value) && promo.value.includes(product.id)) {
+        return promo.discountPercent;
+      }
+    }
+    return 0;
+  }
+
+  function getDiscountedPrice(product, promos = null) {
+    const discount = getDiscountForProduct(product, promos);
+    if (discount > 0) {
+      return Math.round(product.price * (1 - discount / 100));
+    }
+    return product.price;
+  }
+
   // ---------- ЭКСПОРТ ГЛОБАЛЬНЫХ ФУНКЦИЙ ----------
   global.Shop = {
     STORAGE_KEYS,
@@ -319,10 +372,17 @@
     initLogo,
     renderProductCard,
     attachProductCardListeners,
+        loadActivePromos,
+    clearPromosCache,
+    getDiscountForProduct,
+    getDiscountedPrice,
     onStorageUpdate: function(callback) { storageCallbacks.push(callback); }
   };
 
-  window.addEventListener('storage', (e) => {
+    window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEYS.PROMOS) {
+      clearPromosCache();   // <-- добавить
+    }
     if (Object.values(STORAGE_KEYS).includes(e.key)) {
       syncCounters();
       storageCallbacks.forEach(cb => cb(e));

@@ -115,18 +115,30 @@
         </div>
     </div>
 
-    <!-- Вкладка Акции -->
+        <!-- Вкладка Акции (Скидки) -->
     <div class="tab-pane" id="pane-promo">
         <div class="panel">
-            <h2>🎁 Управление акциями</h2>
-            <form id="promo-form">
+            <h2>🎁 Скидки на товары</h2>
+            <form id="promo-form" autocomplete="off">
                 <div class="form-grid">
                     <div class="form-group"><label>ID акции *</label><input type="text" id="promo-id" required></div>
-                    <div class="form-group"><label>Заголовок</label><input type="text" id="promo-title"></div>
-                    <div class="form-group"><label>Описание</label><textarea id="promo-desc"></textarea></div>
-                    <div class="form-group"><label>Цвет фона</label><input type="color" id="promo-bg" value="#c49a3f"></div>
-                    <div class="form-group"><label>Текст кнопки</label><input type="text" id="promo-btnText" value="Подробнее"></div>
-                    <div class="form-group"><label>Ссылка</label><input type="text" id="promo-link" value="#"></div>
+                    <div class="form-group"><label>Процент скидки (%) *</label><input type="number" id="promo-discount" min="1" max="99" required></div>
+                    <div class="form-group">
+                        <label>Тип скидки</label>
+                        <select id="promo-type" required>
+                            <option value="">-- выберите --</option>
+                            <option value="category">Категория</option>
+                            <option value="items">Конкретные товары</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="promo-category-group" style="display:none;">
+                        <label>Категория *</label>
+                        <select id="promo-category"></select>
+                    </div>
+                    <div class="form-group" id="promo-items-group" style="display:none;">
+                        <label>ID товаров (через запятую) *</label>
+                        <input type="text" id="promo-items" placeholder="1,5,10">
+                    </div>
                 </div>
                 <div class="actions">
                     <button type="submit" class="btn btn-primary" id="promo-submit">➕ Добавить</button>
@@ -134,11 +146,15 @@
                 </div>
             </form>
         </div>
-        <div class="table-header-actions"><h2>📢 Список акций</h2></div>
+        <div class="table-header-actions"><h2>📢 Активные скидки</h2></div>
         <div class="table-wrapper">
-            <table><thead><tr><th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th></tr></thead><tbody id="promo-tbody"></tbody></table>
+            <table>
+                <thead><tr><th>ID</th><th>Тип</th><th>Значение</th><th>Скидка</th><th>Действия</th></tr></thead>
+                <tbody id="promo-tbody"></tbody>
+            </table>
         </div>
     </div>
+    
 
     <!-- Вкладка Новости -->
     <div class="tab-pane" id="pane-news">
@@ -163,7 +179,7 @@
         </div>
     </div>
 
-    <!-- Вкладка Карусель (исправленная таблица) -->
+    <!-- Вкладка Карусель -->
     <div class="tab-pane" id="pane-carousel">
         <div class="panel">
             <h2>🎠 Управление слайдами карусели</h2>
@@ -175,6 +191,13 @@
                     <div class="form-group"><label>Цвет фона</label><input type="color" id="slide-bg" value="#1e2a2e"></div>
                     <div class="form-group"><label>Текст кнопки</label><input type="text" id="slide-btnText" value="Смотреть"></div>
                     <div class="form-group"><label>Ссылка</label><input type="text" id="slide-link" value="catalog.html"></div>
+                    <div class="form-group"><label>Фоновое изображение (имя файла)</label><input type="text" id="slide-img" placeholder="slide1.jpg"></div>
+                    <div class="form-group" style="grid-column:span 2;">
+                        <label>Предпросмотр</label>
+                        <div id="slideImagePreview" style="width:200px;height:120px;background:#ddd;border-radius:12px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                            <span style="color:#666;">Нет изображения</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="actions">
                     <button type="submit" class="btn btn-primary" id="slide-submit">➕ Добавить</button>
@@ -187,7 +210,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th><th>Заголовок</th><th>Фон</th><th>Кнопка</th><th>Действия</th>
+                        <th>ID</th>
+                        <th>Превью</th>
+                        <th>Заголовок</th>
+                        <th>Фон</th>
+                        <th>Кнопка</th>
+                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody id="slide-tbody"></tbody>
@@ -424,47 +452,141 @@
             }
         });
 
-        // ---------- АКЦИИ ----------
+                // ---------- АКЦИИ (СКИДКИ) ----------
         let editingPromoId = null;
         const promoForm = document.getElementById('promo-form');
-        const promoId = document.getElementById('promo-id'), promoTitle = document.getElementById('promo-title'), promoDesc = document.getElementById('promo-desc'), promoBg = document.getElementById('promo-bg'), promoBtnText = document.getElementById('promo-btnText'), promoLink = document.getElementById('promo-link');
-        const promoSubmit = document.getElementById('promo-submit'), promoCancel = document.getElementById('promo-cancel');
-        function resetPromoForm() { promoForm.reset(); editingPromoId = null; promoSubmit.textContent = '➕ Добавить'; promoCancel.style.display = 'none'; promoId.disabled = false; }
-        function editPromo(id) { const p = promos.find(p => p.id === id); if(!p) return; promoId.value = p.id; promoTitle.value = p.title||''; promoDesc.value = p.desc||''; promoBg.value = p.bg||'#c49a3f'; promoBtnText.value = p.btnText||'Подробнее'; promoLink.value = p.link||'#'; editingPromoId = id; promoId.disabled = true; promoSubmit.textContent = '💾 Сохранить'; promoCancel.style.display = 'inline-flex'; }
+        const promoId = document.getElementById('promo-id'),
+              promoDiscount = document.getElementById('promo-discount'),
+              promoType = document.getElementById('promo-type'),
+              promoCategoryGroup = document.getElementById('promo-category-group'),
+              promoItemsGroup = document.getElementById('promo-items-group'),
+              promoCategorySelect = document.getElementById('promo-category'),
+              promoItemsInput = document.getElementById('promo-items');
+        const promoSubmit = document.getElementById('promo-submit'),
+              promoCancel = document.getElementById('promo-cancel');
+
+        // Заполняем выпадающий список категорий из текущего каталога
+        function populateCategorySelect() {
+            const categories = [...new Set(weapons.map(w => w.category).filter(Boolean))];
+            promoCategorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        promoType.addEventListener('change', () => {
+            const type = promoType.value;
+            promoCategoryGroup.style.display = type === 'category' ? 'block' : 'none';
+            promoItemsGroup.style.display = type === 'items' ? 'block' : 'none';
+        });
+
+        function resetPromoForm() {
+            promoForm.reset();
+            editingPromoId = null;
+            promoSubmit.textContent = '➕ Добавить';
+            promoCancel.style.display = 'none';
+            promoId.disabled = false;
+            promoCategoryGroup.style.display = 'none';
+            promoItemsGroup.style.display = 'none';
+        }
+
+                function editPromo(id) {
+            const p = promos.find(p => p.id === id);
+            if (!p) return;
+            promoId.value = p.id;
+            promoDiscount.value = p.discountPercent || '';
+            promoType.value = p.type || '';
+            if (p.type === 'category') {
+                promoCategorySelect.value = p.value || '';
+                promoCategoryGroup.style.display = 'block';
+                promoItemsGroup.style.display = 'none';
+            } else {
+                // p.value может быть строкой или массивом
+                const valueAsString = Array.isArray(p.value) ? p.value.join(',') : (p.value || '');
+                promoItemsInput.value = valueAsString;
+                promoItemsGroup.style.display = 'block';
+                promoCategoryGroup.style.display = 'none';
+            }
+            editingPromoId = id;
+            promoId.disabled = true;
+            promoSubmit.textContent = '💾 Сохранить';
+            promoCancel.style.display = 'inline-flex';
+        }
+
         promoForm.addEventListener('submit', e => {
             e.preventDefault();
             const id = promoId.value.trim();
-            if(!id) return alert('Введите ID');
-            const newPromo = { id, title: promoTitle.value, desc: promoDesc.value, bg: promoBg.value, btnText: promoBtnText.value, link: promoLink.value };
-            if(editingPromoId) { const idx = promos.findIndex(p => p.id === editingPromoId); if(idx!==-1) promos[idx] = newPromo; }
-            else { if(promos.some(p => p.id === id)) return alert('ID уже существует'); promos.push(newPromo); }
-            savePromos(); renderPromos(); resetPromoForm(); Shop.showToast('Акция сохранена');
+            if (!id) return alert('Введите ID');
+            const discount = parseInt(promoDiscount.value);
+            if (isNaN(discount) || discount < 1 || discount > 99) return alert('Скидка от 1 до 99%');
+            const type = promoType.value;
+            if (!type) return alert('Выберите тип скидки');
+            let value;
+            if (type === 'category') {
+                value = promoCategorySelect.value;
+                if (!value) return alert('Выберите категорию');
+            } else {
+                const idsStr = promoItemsInput.value.trim();
+                if (!idsStr) return alert('Введите ID товаров');
+                value = idsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+                if (value.length === 0) return alert('Некорректные ID');
+            }
+
+            const newPromo = { id, discountPercent: discount, type, value };
+            if (editingPromoId) {
+                const idx = promos.findIndex(p => p.id === editingPromoId);
+                if (idx !== -1) promos[idx] = newPromo;
+            } else {
+                if (promos.some(p => p.id === id)) return alert('ID уже существует');
+                promos.push(newPromo);
+            }
+            savePromos(); renderPromos(); resetPromoForm();
+            Shop.showToast('Скидка сохранена');
         });
+
         promoCancel.addEventListener('click', resetPromoForm);
-        function renderPromos() {
+
+                function renderPromos() {
             const tbody = document.getElementById('promo-tbody');
-            if (!promos.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-message">Нет акций</td></tr>'; return; }
+            // Оставляем только валидные объекты нового формата, у которых есть discountPercent
+            const validPromos = promos.filter(p => p && typeof p.discountPercent === 'number');
+            if (!validPromos.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-message">Нет активных скидок</td></tr>';
+                return;
+            }
             let html = '';
-            promos.forEach(p => {
+            validPromos.forEach(p => {
+                const typeStr = p.type === 'category' ? 'Категория' : 'Товары';
+                // Безопасно получаем значение
+                let valueStr = '';
+                if (p.type === 'category') {
+                    valueStr = p.value || '';
+                } else {
+                    valueStr = Array.isArray(p.value) ? p.value.join(', ') : (p.value || '');
+                }
                 html += `<tr>
                     <td>${Shop.escapeHtml(p.id)}</td>
-                    <td>${Shop.escapeHtml(p.title)}</td>
-                    <td><div style="width:40px;height:30px;background:${p.bg};border-radius:6px;"></div></td>
-                    <td>${Shop.escapeHtml(p.btnText)}</td>
-                    <td><button class="btn btn-outline btn-sm edit-promo" data-id="${p.id}">✏️</button> <button class="btn btn-danger btn-sm delete-promo" data-id="${p.id}">🗑️</button></td>
+                    <td>${typeStr}</td>
+                    <td>${Shop.escapeHtml(valueStr)}</td>
+                    <td><strong>-${p.discountPercent}%</strong></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-promo" data-id="${p.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-promo" data-id="${p.id}">🗑️</button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
         }
+
         document.addEventListener('click', e => {
-            if(e.target.classList.contains('edit-promo')) editPromo(e.target.dataset.id);
-            if(e.target.classList.contains('delete-promo')) {
+            if (e.target.classList.contains('edit-promo')) editPromo(e.target.dataset.id);
+            if (e.target.classList.contains('delete-promo')) {
                 const id = e.target.dataset.id;
                 promos = promos.filter(p => p.id !== id); savePromos(); renderPromos();
-                if(editingPromoId === id) resetPromoForm();
-                Shop.showToast('Акция удалена');
+                if (editingPromoId === id) resetPromoForm();
+                Shop.showToast('Скидка удалена');
             }
         });
+
+        // При загрузке и после импорта обновляем категории
+        // Вызов populateCategorySelect() будет в init после загрузки оружия
 
         // ---------- НОВОСТИ ----------
         let editingNewsId = null;
@@ -508,44 +630,124 @@
             }
         });
 
-        // ---------- СЛАЙДЫ ----------
+                // ---------- СЛАЙДЫ ----------
         let editingSlideId = null;
         const slideForm = document.getElementById('slide-form');
-        const slideId = document.getElementById('slide-id'), slideTitle = document.getElementById('slide-title'), slideSubtitle = document.getElementById('slide-subtitle'), slideBg = document.getElementById('slide-bg'), slideBtnText = document.getElementById('slide-btnText'), slideLink = document.getElementById('slide-link');
-        const slideSubmit = document.getElementById('slide-submit'), slideCancel = document.getElementById('slide-cancel');
-        function resetSlideForm() { slideForm.reset(); editingSlideId = null; slideSubmit.textContent = '➕ Добавить'; slideCancel.style.display = 'none'; slideId.disabled = false; }
-        function editSlide(id) { const s = slides.find(s => s.id === id); if(!s) return; slideId.value = s.id; slideTitle.value = s.title||''; slideSubtitle.value = s.subtitle||''; slideBg.value = s.bg||'#1e2a2e'; slideBtnText.value = s.btnText||'Смотреть'; slideLink.value = s.link||'catalog.html'; editingSlideId = id; slideId.disabled = true; slideSubmit.textContent = '💾 Сохранить'; slideCancel.style.display = 'inline-flex'; }
+        const slideId = document.getElementById('slide-id'),
+              slideTitle = document.getElementById('slide-title'),
+              slideSubtitle = document.getElementById('slide-subtitle'),
+              slideBg = document.getElementById('slide-bg'),
+              slideBtnText = document.getElementById('slide-btnText'),
+              slideLink = document.getElementById('slide-link'),
+              slideImg = document.getElementById('slide-img');  // новое поле
+        const slideSubmit = document.getElementById('slide-submit'),
+              slideCancel = document.getElementById('slide-cancel');
+        const slidePreview = document.getElementById('slideImagePreview'); // превью
+
+        // Обновление превью слайда
+        function updateSlidePreview(fname) {
+            if (!fname) {
+                slidePreview.innerHTML = '<span style="color:#666;">Нет изображения</span>';
+                slidePreview.style.backgroundImage = '';
+                return;
+            }
+            const url = `images/${Shop.escapeHtml(fname)}`;
+            slidePreview.innerHTML = ''; // убираем текст
+            slidePreview.style.backgroundImage = `url('${url}')`;
+            slidePreview.style.backgroundColor = ''; // убираем фон-заглушку
+            slidePreview.onerror = function() {
+                this.style.backgroundImage = '';
+                this.innerHTML = '<span style="color:#888;">Ошибка загрузки</span>';
+            };
+        }
+
+        // При вводе в поле слайд-img обновляем превью
+        slideImg.addEventListener('input', () => updateSlidePreview(slideImg.value.trim()));
+
+        function resetSlideForm() {
+            slideForm.reset();
+            editingSlideId = null;
+            slideSubmit.textContent = '➕ Добавить';
+            slideCancel.style.display = 'none';
+            slideId.disabled = false;
+            updateSlidePreview(''); // очищаем превью
+        }
+
+        function editSlide(id) {
+            const s = slides.find(s => s.id === id);
+            if (!s) return;
+            slideId.value = s.id;
+            slideTitle.value = s.title || '';
+            slideSubtitle.value = s.subtitle || '';
+            slideBg.value = s.bg || '#1e2a2e';
+            slideBtnText.value = s.btnText || 'Смотреть';
+            slideLink.value = s.link || 'catalog.html';
+            slideImg.value = s.img || '';          // устанавливаем имя файла
+            editingSlideId = id;
+            slideId.disabled = true;
+            slideSubmit.textContent = '💾 Сохранить';
+            slideCancel.style.display = 'inline-flex';
+            updateSlidePreview(slideImg.value.trim()); // обновляем превью
+        }
+
         slideForm.addEventListener('submit', e => {
             e.preventDefault();
             const id = slideId.value.trim();
-            if(!id) return alert('Введите ID');
-            const newSlide = { id, title: slideTitle.value, subtitle: slideSubtitle.value, bg: slideBg.value, btnText: slideBtnText.value, link: slideLink.value };
-            if(editingSlideId) { const idx = slides.findIndex(s => s.id === editingSlideId); if(idx!==-1) slides[idx] = newSlide; }
-            else { if(slides.some(s => s.id === id)) return alert('ID уже существует'); slides.push(newSlide); }
+            if (!id) return alert('Введите ID');
+            const newSlide = {
+                id,
+                title: slideTitle.value,
+                subtitle: slideSubtitle.value,
+                bg: slideBg.value,
+                btnText: slideBtnText.value,
+                link: slideLink.value,
+                img: slideImg.value.trim()   // сохраняем имя файла
+            };
+            if (editingSlideId) {
+                const idx = slides.findIndex(s => s.id === editingSlideId);
+                if (idx !== -1) slides[idx] = newSlide;
+            } else {
+                if (slides.some(s => s.id === id)) return alert('ID уже существует');
+                slides.push(newSlide);
+            }
             saveSlides(); renderSlides(); resetSlideForm(); Shop.showToast('Слайд сохранён');
         });
+
         slideCancel.addEventListener('click', resetSlideForm);
+
         function renderSlides() {
             const tbody = document.getElementById('slide-tbody');
-            if (!slides.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-message">Нет слайдов</td></tr>'; return; }
+            if (!slides.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-message">Нет слайдов</td></tr>';
+                return;
+            }
             let html = '';
             slides.forEach(s => {
+                // Мини-превью
+                const imgStyle = s.img ? `background-image:url('images/${Shop.escapeHtml(s.img)}');background-size:cover;background-position:center;` : '';
+                const bgColor = s.bg || '#1e2a2e';
                 html += `<tr>
                     <td>${Shop.escapeHtml(s.id)}</td>
+                    <td><div style="width:80px;height:50px;border-radius:6px;${imgStyle}background-color:${bgColor};display:flex;align-items:center;justify-content:center;color:white;font-size:12px;overflow:hidden;">
+                        ${!s.img ? '🔲' : ''}
+                    </div></td>
                     <td>${Shop.escapeHtml(s.title)}</td>
                     <td><div style="width:40px;height:30px;background:${s.bg};border-radius:6px;"></div></td>
                     <td>${Shop.escapeHtml(s.btnText)}</td>
-                    <td><button class="btn btn-outline btn-sm edit-slide" data-id="${s.id}">✏️</button> <button class="btn btn-danger btn-sm delete-slide" data-id="${s.id}">🗑️</button></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm edit-slide" data-id="${s.id}">✏️</button>
+                        <button class="btn btn-danger btn-sm delete-slide" data-id="${s.id}">🗑️</button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
         }
         document.addEventListener('click', e => {
-            if(e.target.classList.contains('edit-slide')) editSlide(e.target.dataset.id);
-            if(e.target.classList.contains('delete-slide')) {
+            if (e.target.classList.contains('edit-slide')) editSlide(e.target.dataset.id);
+            if (e.target.classList.contains('delete-slide')) {
                 const id = e.target.dataset.id;
                 slides = slides.filter(s => s.id !== id); saveSlides(); renderSlides();
-                if(editingSlideId === id) resetSlideForm();
+                if (editingSlideId === id) resetSlideForm();
                 Shop.showToast('Слайд удалён');
             }
         });
@@ -649,7 +851,8 @@ if (typeof window !== 'undefined') { window.shopContent = { weaponsCatalog, prom
             });
         });
 
-        loadAll();
+                loadAll();
+        populateCategorySelect();   
         renderCatalog(); renderPromos(); renderNews(); renderSlides(); renderPopular();
     }
 </script>

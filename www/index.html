@@ -150,56 +150,77 @@
 
             // Карусель
             function renderCarousel() {
-                const container = document.getElementById('carouselContainer');
-                if (!container) return;
-                const slides = slidesData.length ? slidesData : [
-                    { title: 'СКИДКИ НА ОРУЖИЕ ДО 30%', bg: 'linear-gradient(145deg, #2c3e50, #1e2a2e)', link: 'catalog.html' },
-                    { title: 'РЫБОЛОВНЫЕ СНАСТИ -25%', bg: 'linear-gradient(145deg, #3e5c4b, #1f3a2c)', link: 'catalog.html' },
-                    { title: 'ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%', bg: 'linear-gradient(145deg, #5d4037, #3e2723)', link: 'catalog.html' }
-                ];
-                let html = `
-                    <div class="carousel-slides" id="carouselSlides">
-                        ${slides.map(s => `<div class="carousel-slide" data-link="${s.link}"><div class="promo-banner" style="background: ${s.bg};">${escapeHtml(s.title)}</div></div>`).join('')}
-                    </div>
-                    <button class="carousel-arrow carousel-arrow-left" id="carouselPrev">❮</button>
-                    <button class="carousel-arrow carousel-arrow-right" id="carouselNext">❯</button>
-                    <div class="carousel-dots" id="carouselDots">${slides.map((_,i) => `<span class="carousel-dot" data-index="${i}"></span>`).join('')}</div>
-                `;
-                container.innerHTML = html;
-                let current = 0, total = slides.length, interval;
-                const slidesEl = document.getElementById('carouselSlides');
-                const dots = document.querySelectorAll('.carousel-dot');
-                const update = () => {
-                    slidesEl.style.transform = `translateX(-${current * 100}%)`;
-                    dots.forEach((dot,i) => dot.classList.toggle('active', i === current));
-                };
-                const next = () => { current = (current+1)%total; update(); };
-                const prev = () => { current = (current-1+total)%total; update(); };
-                document.getElementById('carouselNext').addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); next(); interval = setInterval(next, 5000); });
-                document.getElementById('carouselPrev').addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); prev(); interval = setInterval(next, 5000); });
-                dots.forEach((dot,i) => dot.addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); current = i; update(); interval = setInterval(next, 5000); }));
-                document.querySelectorAll('.carousel-slide').forEach(slide => slide.addEventListener('click', () => window.location.href = slide.dataset.link));
-                update();
-                interval = setInterval(next, 5000);
-            }
+    const container = document.getElementById('carouselContainer');
+    if (!container) return;
+    const slides = slidesData.length ? slidesData : [
+        { title: 'СКИДКИ НА ОРУЖИЕ ДО 30%', bg: 'linear-gradient(145deg, #2c3e50, #1e2a2e)', link: 'catalog.html', img: '' },
+        { title: 'РЫБОЛОВНЫЕ СНАСТИ -25%', bg: 'linear-gradient(145deg, #3e5c4b, #1f3a2c)', link: 'catalog.html', img: '' },
+        { title: 'ОДЕЖДА ДЛЯ ОХОТЫ СО СКИДКОЙ 20%', bg: 'linear-gradient(145deg, #5d4037, #3e2723)', link: 'catalog.html', img: '' }
+    ];
+
+    let html = `
+        <div class="carousel-slides" id="carouselSlides">
+            ${slides.map(s => {
+                const bgStyle = s.img ? `background-image:url('images/${s.img}');background-size:cover;background-position:center;` : '';
+                const bg = s.img ? `${s.bg || 'rgba(0,0,0,0.4)'}` : s.bg;
+                return `<div class="carousel-slide" data-link="${s.link}">
+                    <div class="promo-banner" style="background: ${bg}; ${bgStyle}">${Shop.escapeHtml(s.title)}</div>
+                </div>`;
+            }).join('')}
+        </div>
+        <button class="carousel-arrow carousel-arrow-left" id="carouselPrev">❮</button>
+        <button class="carousel-arrow carousel-arrow-right" id="carouselNext">❯</button>
+        <div class="carousel-dots" id="carouselDots">${slides.map((_,i) => `<span class="carousel-dot" data-index="${i}"></span>`).join('')}</div>
+    `;
+    container.innerHTML = html;
+
+    let current = 0, total = slides.length, interval;
+    const slidesEl = document.getElementById('carouselSlides');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const update = () => {
+        slidesEl.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((dot,i) => dot.classList.toggle('active', i === current));
+    };
+    const next = () => { current = (current+1)%total; update(); };
+    const prev = () => { current = (current-1+total)%total; update(); };
+    document.getElementById('carouselNext').addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); next(); interval = setInterval(next, 5000); });
+    document.getElementById('carouselPrev').addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); prev(); interval = setInterval(next, 5000); });
+    dots.forEach((dot,i) => dot.addEventListener('click', (e) => { e.stopPropagation(); clearInterval(interval); current = i; update(); interval = setInterval(next, 5000); }));
+    document.querySelectorAll('.carousel-slide').forEach(slide => slide.addEventListener('click', () => window.location.href = slide.dataset.link));
+    update();
+    interval = setInterval(next, 5000);
+}
 
             // Новости
-            function renderNews() {
-                const container = document.getElementById('newsList');
-                if (!container) return;
-                const items = newsData.length ? newsData : [
-                    { title: '📢 Новые поступления патронов', text: 'Поступила партия патронов 12 калибра.', date: '2 часа назад' },
-                    { title: '🎣 Сезонная распродажа снастей', text: 'Удилища и катушки со скидкой до 25%.', date: 'Вчера' },
-                    { title: '🛡️ Новые бронежилеты класса Бр5', text: 'Поступление сертифицированных бронежилетов.', date: '3 дня назад' }
-                ];
-                container.innerHTML = items.map(n => `
-                    <div class="news-item">
-                        <h3>${escapeHtml(n.title)}</h3>
-                        <p>${escapeHtml(n.text)}</p>
-                        <small>${escapeHtml(n.date || '')}</small>
-                    </div>
-                `).join('');
+           function renderNews() {
+    const container = document.getElementById('newsList');
+    if (!container) return;
+    const items = newsData.length ? newsData : [
+        { title: '📢 Новые поступления патронов', text: 'Поступила партия патронов 12 калибра.', date: '2026-04-21' },
+        { title: '🎣 Сезонная распродажа снастей', text: 'Удилища и катушки со скидкой до 25%.', date: '2026-04-20' },
+        { title: '🛡️ Новые бронежилеты класса Бр5', text: 'Поступление сертифицированных бронежилетов.', date: '2026-04-19' }
+    ];
+
+    container.innerHTML = items.map(n => {
+        // Форматируем дату (если есть)
+        let dateStr = '';
+        if (n.date) {
+            const d = new Date(n.date);
+            if (!isNaN(d.getTime())) {
+                dateStr = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            } else {
+                dateStr = n.date; // если невалидная, выводим как есть
             }
+        }
+        return `
+            <div class="news-item">
+                <h3>${escapeHtml(n.title)}</h3>
+                <p>${escapeHtml(n.text)}</p>
+                ${dateStr ? `<div class="news-date">${escapeHtml(dateStr)}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
 
             // Инициализация элементов управления
             document.getElementById('resetBrandFilter').addEventListener('click', () => {

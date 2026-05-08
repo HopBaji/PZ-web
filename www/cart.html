@@ -210,16 +210,27 @@
                     continue;
                 }
 
-                // НОРМАЛЬНЫЙ ТОВАР (добавлен недостающий код)
-                const price = product.price || 0;
+                                // НОРМАЛЬНЫЙ ТОВАР
+                const discountPercent = Shop.getDiscountForProduct(product);
+                const discountedPrice = Shop.getDiscountedPrice(product);
+                const price = discountedPrice;
                 const itemTotal = price * item.quantity;
                 total += itemTotal;
-                const priceDisplay = product.priceStr || (price.toLocaleString('ru-RU') + ' ₽');
+
+                let priceDisplayHTML = '';
+                if (discountPercent > 0) {
+                    const oldPriceStr = product.priceStr || product.price.toLocaleString('ru-RU') + ' ₽';
+                    const newPriceStr = discountedPrice.toLocaleString('ru-RU') + ' ₽';
+                    priceDisplayHTML = `<span class="old-price">${oldPriceStr}</span> <span class="new-price">${newPriceStr}</span>`;
+                } else {
+                    priceDisplayHTML = product.priceStr || price.toLocaleString('ru-RU') + ' ₽';
+                }
+
                 html += `
                     <div class="cart-item" data-id="${product.id}">
                         <div class="cart-item-image" style="${product.imgFile ? `background-image:url('images/${product.imgFile}');background-size:contain;` : 'background:#d9d2c0;'}">${!product.imgFile ? (product.imgLabel || product.brand || '🔫') : ''}</div>
                         <div class="cart-item-info"><h3>${Shop.escapeHtml(product.name)}</h3><p>${Shop.escapeHtml(product.brand || '')}</p></div>
-                        <div class="cart-item-price">${Shop.escapeHtml(priceDisplay)}</div>
+                        <div class="cart-item-price">${priceDisplayHTML}</div>
                         <div class="cart-item-quantity">
                             <button class="qty-btn" data-id="${product.id}" data-delta="-1">−</button>
                             <span>${item.quantity}</span>
